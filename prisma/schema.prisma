@@ -24,3 +24,12 @@ model User {
   deletedAt     DateTime?
   roles         String    @default("User")
 }
+
+model role {
+  id         Int       @id @default(autoincrement())
+  name       String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime? @updatedAt
+  deletedAt  DateTime?
+  deleteMark Boolean
+}
