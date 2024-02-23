@@ -5,13 +5,11 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const config = new DocumentBuilder()
-  .setTitle('Tantandihoc')
+  .setTitle('MoneyManagement')
   .setDescription('List Api')
   .setVersion('1.0')
   .addTag('Auth')
   .addTag('Users')
-  .addTag('Posts')
-  .addTag('Tags')
   .build()
   const document = SwaggerModule.createDocument(app,config)
   SwaggerModule.setup('api', app, document)
