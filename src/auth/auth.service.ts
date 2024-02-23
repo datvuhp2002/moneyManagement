@@ -24,7 +24,6 @@ export class AuthService {
         }
         // step 2: hash password and store to db
         const hashPassword = await this.hashPassword(userData.password)
-        
         const res = await this.prismaService.user.create({
             data: {...userData, password: hashPassword}
         })
@@ -68,7 +67,8 @@ export class AuthService {
         return {access_token, refresh_token};
     }
     private async hashPassword(password: String):Promise<string>{
-        const salt = await bcrypt.genSalt(this.configServer.get<Number>('SALTROUND'));
+        const saltRounds = parseInt(this.configServer.get<string>('SALTROUND'));
+        const salt = await bcrypt.genSalt(saltRounds);
         const hash = await bcrypt.hash(password, salt)
         return hash;
     }

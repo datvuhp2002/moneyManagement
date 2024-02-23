@@ -29,7 +29,7 @@ model User {
   phone           Int?
   note            String?
   ownership_role  Role              @relation(fields: [role_id], references: [id])
-  role_id         Int
+  role_id         Int               @default(1)
   avatar          String?
   refresh_token   String?           @db.LongText
   status          Int               @default(1)
