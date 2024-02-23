@@ -8,10 +8,10 @@ export class RegisterUserDto{
     @IsNotEmpty()
     @MinLength(6)
     password: string;
-
     @IsOptional()
     avatar?: string;
     status: number;
+    role_id:number;
 }
 export class LoginUserDto{
     @IsNotEmpty()

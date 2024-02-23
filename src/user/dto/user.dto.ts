@@ -9,7 +9,7 @@ export class CreateUserDto {
     @IsNotEmpty()
     @MinLength(6)
     password: string
-    status: number
+    role_id: number
 }
 export interface UserFilterType{
     items_per_page?:number
@@ -29,14 +29,13 @@ export interface UserPaginationResponseType{
 export class UpdateUserDto{
     username: string
     avatar?: string
-    status: number
 }
 export class SoftDeleteUserDto{
-    status: number
+    deleteMark:Boolean
     deletedAt: Date
 }
 export class softMultipleDeleteUserDto{
-    data: {status: number, deletedAt:Date }[];
+    data: {deleteMark:Boolean, deletedAt:Date }[];
 }
 export class UploadAvatarResult{
     @IsNotEmpty()

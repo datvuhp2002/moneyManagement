@@ -27,8 +27,9 @@ export class AuthGuard implements CanActivate{
             const payload = await this.jwtService.verifyAsync(token,{
                 secret: this.configService.get<string>('SECRET')
             })
-            const user = await this.prismaService.user.findUnique({where:{id: payload.id}})
-            request['user'] = user
+            const user = await this.prismaService.user.findUnique({where:{id: payload.id}, include: { ownership_role: true }})
+            const roleName = user.ownership_role.name;
+            request['roleName'] = roleName
             request['user_data'] = payload; 
         }catch(e){
             console.log('Khong the dang nhap',e)

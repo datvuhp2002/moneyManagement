@@ -11,7 +11,7 @@ export class UserService {
         const user = await this.prismaService.user.findUnique({
             where:{
                 email: body.email,
-                status: 1
+                deleteMark: false
             },
         })
         if(user) {
@@ -53,7 +53,7 @@ export class UserService {
                 ],
                 AND: [
                     {
-                        status: 1
+                        deleteMark: false
                     }
                 ]
             },
@@ -77,7 +77,7 @@ export class UserService {
                 ],
                 AND: [
                     {
-                        status: 1
+                        deleteMark: false
                     }
                 ]
             },
@@ -98,7 +98,7 @@ export class UserService {
         return this.prismaService.user.findUnique({
             where:{
                 id,
-                status: 1
+                deleteMark: false
             }
         })
     }
@@ -112,7 +112,7 @@ export class UserService {
         console.log('delete id: ', id)
         return await this.prismaService.user.update({where:{id},
         data:{
-            status: 0,
+            deleteMark: false,
             deletedAt: new Date()
         }})
     }
@@ -120,13 +120,12 @@ export class UserService {
         const updatePromises = ids.map(async id => {
             try {
                 const updatedUser = await this.prismaService.user.update({
-                    where: { id: Number(id), status: 1},
+                    where: { id: Number(id), deleteMark: false },
                     data: {
-                        status: 0,
+                        deleteMark: true,
                         deletedAt: new Date(),
                     },
                     select: {
-                        status: true,
                         deletedAt: true,
                     },
                 });
