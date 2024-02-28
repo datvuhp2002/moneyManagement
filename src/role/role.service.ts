@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.servcie';
-import { RoleFilterType, RolePaginationResponseType } from './dto/role.dto';
-
+import { RoleFilterType, RolePaginationResponseType, SoftDeleteRoleDto } from './dto/role.dto';
+import { Role } from '@prisma/client';
+import { UpdateRoleDto } from 'src/role/dto/role.dto';
 @Injectable()
 export class RoleService {
     constructor(private prismaService: PrismaService){}
@@ -54,5 +55,28 @@ export class RoleService {
           currentPage: page,
           itemsPerPage: items_per_page,
         };
-      }
+    }
+    async getDetail(id: number): Promise<Role> {
+      return await this.prismaService.role.findUnique({
+        where: {
+          id,
+        },
+      });
+    }
+    async update(id: number, data: UpdateRoleDto): Promise<Role> {
+      return await this.prismaService.user.update({
+        where: { id },
+        data,
+      });
+    }
+    async deleteById(id: number): Promise<SoftDeleteRoleDto> {
+      console.log('delete id: ', id);
+      return await this.prismaService.user.update({
+        where: { id },
+        data: {
+          deleteMark: false,
+          deletedAt: new Date(),
+        },
+      });
+    }
 }
