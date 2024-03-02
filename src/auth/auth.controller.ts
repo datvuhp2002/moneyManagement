@@ -7,6 +7,7 @@ import {
   ValidationPipe,
   Get,
   Req,
+  SetMetadata
 } from '@nestjs/common';
 import { LoginUserDto, RegisterUserDto } from './dto/registerUserDto.dto';
 import { AuthService } from './auth.service';
@@ -28,13 +29,8 @@ export class AuthController {
   @UseGuards(AuthGuard('local'))
   @Public()
   @Post('login')
-  async login(@Req() req: Request) {
+  async login(@Req() req:Request) {
     return await this.authService.login(req.user);
-  }
-  @UseGuards(JwtAuthGuard)
-  @Get('profile')
-  getProfile(@Req() req: Request) {
-    return req.user;
   }
   @Post('refresh_token')
   @Public()

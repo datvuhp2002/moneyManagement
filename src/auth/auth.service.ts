@@ -32,7 +32,6 @@ export class AuthService {
   }
   // Promise<{ access_token: string; refresh_token: string }>
   login = async (user: any) => {
-    console.log(user);
     const payload = {
       id: user.id,
       email: user.email,
