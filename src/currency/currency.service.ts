@@ -16,7 +16,7 @@ export class CurrencyService {
     const page = Number(filters.page) || 1;
     const search = filters.search || '';
     const skip = page > 1 ? (page - 1) * items_per_page : 0;
-    const roles = await this.prismaService.role.findMany({
+    const roles = await this.prismaService.currency.findMany({
       take: items_per_page,
       skip,
       select: {

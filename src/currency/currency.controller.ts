@@ -7,23 +7,24 @@ import { Currency } from '@prisma/client';
 
 @Controller('currency')
 export class CurrencyController {
-  constructor(private readonly currencyService: CurrencyService) {}
+  constructor(private currencyService: CurrencyService) {}
 
   @Public()
   @Post()
   create(@Body() body: CreateCurrencyDto) : Promise<Currency> {
-    console.log('get all user api', body);
+    console.log('create currency api', body);
     return this.currencyService.create(body);
   }
+  @Public()
   @Get()
   getAll(@Query() params: CurrencyFilterType): Promise<CurrencyPaginationResponseType> {
-    console.log('get all user api', params);
+    console.log('get all currency api', params);
     return this.currencyService.getAll(params);
   }
 
   @Get(':id')
   getDetail(@Param('id', ParseIntPipe) id: number): Promise<Currency> {
-  console.log('get detail role api =>', id);
+  console.log('get detail currency api =>', id);
   return this.currencyService.getDetail(id);
   }
 
@@ -32,7 +33,7 @@ export class CurrencyController {
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdateCurrencyDto,
   ): Promise<Currency> {
-    console.log('update role api =>', id);
+    console.log('update currency api =>', id);
     return this.currencyService.update(id, body);
   }
 
