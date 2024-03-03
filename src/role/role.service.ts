@@ -69,7 +69,7 @@ export class RoleService {
         data,
       });
     }
-    async deleteById(id: number): Promise<Role> {
+    async delete(id: number): Promise<Role> {
       console.log('delete id: ', id);
       return await this.prismaService.role.update({
         where: { id },

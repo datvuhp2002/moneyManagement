@@ -30,11 +30,9 @@ export class RoleController {
       return this.roleService.update(id, body);
     }
     @Delete(':id')
-    deleteById(
-      @Param('id', ParseIntPipe) id: number,
-    ): Promise<SoftDeleteRoleDto> {
+    async delete( @Param('id', ParseIntPipe) id: number): Promise<Role> {
       console.log('delete role => ', id);
-      return this.roleService.deleteById(id);
+      return this.roleService.delete(id);
     }
     @Delete('force-delete/:id')
     async forceDelete(@Param('id',ParseIntPipe) id:number):Promise<Role>{
