@@ -15,6 +15,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { RoleModule } from './role/role.module';
 import { CategoryGroupModule } from './category-group/category-group.module';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { CategoryGroupModule } from './category-group/category-group.module';
     ]),
     RoleModule,
     CategoryGroupModule,
+    CategoryModule,
   ],
   controllers: [AppController],
   providers: [
