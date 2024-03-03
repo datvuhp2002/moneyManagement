@@ -64,19 +64,24 @@ export class RoleService {
       });
     }
     async update(id: number, data: UpdateRoleDto): Promise<Role> {
-      return await this.prismaService.user.update({
+      return await this.prismaService.role.update({
         where: { id },
         data,
       });
     }
-    async deleteById(id: number): Promise<SoftDeleteRoleDto> {
+    async deleteById(id: number): Promise<Role> {
       console.log('delete id: ', id);
-      return await this.prismaService.user.update({
+      return await this.prismaService.role.update({
         where: { id },
         data: {
-          deleteMark: false,
+          deleteMark: true,
           deletedAt: new Date(),
         },
       });
+    }
+    async forceDelete(id: number):Promise<Role>{
+      return await this.prismaService.role.delete({
+        where:{id, deleteMark:true},
+      })
     }
 }

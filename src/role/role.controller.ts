@@ -36,4 +36,8 @@ export class RoleController {
       console.log('delete role => ', id);
       return this.roleService.deleteById(id);
     }
+    @Delete('force-delete/:id')
+    async forceDelete(@Param('id',ParseIntPipe) id:number):Promise<Role>{
+        return await this.roleService.forceDelete(id)
+    }
 }
