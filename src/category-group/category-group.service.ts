@@ -211,7 +211,6 @@ export class CategoryGroupService {
     async forceDelete(id: number):Promise<CategoriesGroup>{
       return await this.prismaService.categoriesGroup.delete({
         where:{id, deleteMark:true},
-        
       })
     }
 }
