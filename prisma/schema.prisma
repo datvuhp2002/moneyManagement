@@ -104,6 +104,7 @@ model CategoriesGroup {
   category       Category[]
 }
 
+// done
 model Category {
   id                        Int             @id @default(autoincrement())
   ownership_user            User            @relation(fields: [user_id], references: [id])
