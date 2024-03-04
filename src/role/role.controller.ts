@@ -10,11 +10,9 @@ import { Role } from '@prisma/client';
 export class RoleController {
     constructor(private roleService:RoleService){}
     @Get()
-    @Public()
     async getAll(@Param() params: RoleFilterType):Promise<RolePaginationResponseType>{
         return await this.roleService.getAll(params)
     }
-    @Public()
     @Get(':id')
     async getDetail(@Param('id', ParseIntPipe) id: number): Promise<Role> {
     return await this.roleService.getDetail(id);

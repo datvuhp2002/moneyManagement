@@ -13,16 +13,9 @@ export class CurrencyController {
   constructor(private currencyService: CurrencyService) {}
   @Public()
   @Post()
-  async create(@Req() req: Request,@Body() data:CreateCurrencyDto){
-    const userId = Number(req.user['id'])
-    return await this.currencyService.create(userId, data)
-  }
-  @Public()
-  @Roles([Role.User])
-  @Get("/getAll")
-  async getAllForUser(@Req() req: Request,@Param() filter: CurrencyFilterType):Promise<CurrencyPaginationResponseType>{
-      const userId = Number(req.user['id']);
-      return this.currencyService.getAllForUser(userId, filter)
+  create(@Body() body: CreateCurrencyDto) : Promise<Currency> {
+    console.log('get all user api', body);
+    return this.currencyService.create(body);
   }
   @Roles([Role.Admin])
   @Get("/trash")
