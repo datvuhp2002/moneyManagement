@@ -6,6 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import { AuthPayLoadDto } from './dto/auth.dto';
+import { resolve } from 'path';
 @Injectable()
 export class AuthService {
   constructor(
@@ -26,8 +27,15 @@ export class AuthService {
         },
       },
     });
+    await new Promise(resolve => setTimeout(resolve,2000))
+    if(!user){
+      throw new HttpException({message: "Account is not exist"},HttpStatus.UNAUTHORIZED)
+  }
     const verify = await this.VerifyPassword(password, user.password);
-    if (!verify) return null;
+    if (!verify){
+      throw new HttpException({message: "Password does not correct"},HttpStatus.UNAUTHORIZED);
+      return null;
+    }
     return user;
   }
   // Promise<{ access_token: string; refresh_token: string }>
