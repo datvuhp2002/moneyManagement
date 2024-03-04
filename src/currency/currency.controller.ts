@@ -1,44 +1,56 @@
-import { Controller, Get, Post, Body, Param, Delete, Query, ParseIntPipe, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Query, ParseIntPipe, Put, Req } from '@nestjs/common';
 import { CurrencyService } from './currency.service';
 import { CreateCurrencyDto, CurrencyFilterType, CurrencyPaginationResponseType } from './dto/create-currency.dto';
 import { UpdateCurrencyDto } from './dto/update-currency.dto';
 import { Public } from 'src/auth/decorator/auth.decorator';
 import { Currency } from '@prisma/client';
+import { Request } from 'express';
+import { Roles } from 'src/auth/decorator/roles.decorator';
+import { Role } from 'src/auth/dto/Role.enum';
 
 @Controller('currency')
 export class CurrencyController {
   constructor(private currencyService: CurrencyService) {}
-
   @Public()
   @Post()
-  create(@Body() body: CreateCurrencyDto) : Promise<Currency> {
-    console.log('create currency api', body);
-    return this.currencyService.create(body);
+  async create(@Req() req: Request,@Body() data:CreateCurrencyDto){
+    const userId = Number(req.user['id'])
+    return await this.currencyService.create(userId, data)
   }
   @Public()
+  @Roles([Role.User])
+  @Get("/getAll")
+  async getAllForUser(@Req() req: Request,@Param() filter: CurrencyFilterType):Promise<CurrencyPaginationResponseType>{
+      const userId = Number(req.user['id']);
+      return this.currencyService.getAllForUser(userId, filter)
+  }
+  @Roles([Role.Admin])
+  @Get("/trash")
+  async getAllTrash(@Param() filter: CurrencyFilterType):Promise<CurrencyPaginationResponseType>{
+      return this.currencyService.getAllTrash(filter)
+  }
+  @Roles([Role.Admin])
   @Get()
-  getAll(@Query() params: CurrencyFilterType): Promise<CurrencyPaginationResponseType> {
-    console.log('get all currency api', params);
-    return this.currencyService.getAll(params);
+  async getAll(@Param() filter: CurrencyFilterType):Promise<CurrencyPaginationResponseType>{
+      return await this.currencyService.getAll(filter)
   }
 
   @Get(':id')
-  getDetail(@Param('id', ParseIntPipe) id: number): Promise<Currency> {
-  console.log('get detail currency api =>', id);
-  return this.currencyService.getDetail(id);
+  async getDetail(@Param('id', ParseIntPipe) id: number): Promise<Currency> {
+  return await this.currencyService.getDetail(id);
   }
 
   @Put(':id')
-  update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() body: UpdateCurrencyDto,
-  ): Promise<Currency> {
-    console.log('update currency api =>', id);
-    return this.currencyService.update(id, body);
+  async update(@Param('id', ParseIntPipe) id: number, @Body() data: UpdateCurrencyDto): Promise<Currency> {
+    return await this.currencyService.update(id, data);
   }
 
+  @Delete('force-delete/:id')
+  async forceDelete(@Param('id',ParseIntPipe) id:number):Promise<Currency>{
+      return await this.currencyService.forceDelete(id)
+  }
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.currencyService.remove(+id);
+  async delete(@Param('id',ParseIntPipe) id:number):Promise<Currency>{
+      return await this.currencyService.delete(id)
   }
 }

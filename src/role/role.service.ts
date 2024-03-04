@@ -66,7 +66,7 @@ export class RoleService {
     async update(id: number, data: UpdateRoleDto): Promise<Role> {
       return await this.prismaService.role.update({
         where: { id },
-        data,
+        data: {...data}
       });
     }
 }
