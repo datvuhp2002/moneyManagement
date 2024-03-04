@@ -17,6 +17,7 @@ import { RoleModule } from './role/role.module';
 import { CurrencyModule } from './currency/currency.module';
 import { WalletModule } from './wallet/wallet.module';
 import { CategoryGroupModule } from './category-group/category-group.module';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { CategoryGroupModule } from './category-group/category-group.module';
     CurrencyModule,
     WalletModule,
     CategoryGroupModule,
+    CategoryModule,
   ],
   controllers: [AppController],
   providers: [

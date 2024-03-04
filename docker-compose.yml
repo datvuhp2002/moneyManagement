@@ -1,0 +1,10 @@
+version: "3.8"
+services:
+  moneyManagement:
+    image: datvudinhtrong/mydb
+    restart: always
+    environment:
+      - MYSQL_DATABASE=moneyManagement
+      - MYSQL_ROOT_PASSWORD=123456
+    ports:
+      - "3307:3306"
