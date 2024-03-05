@@ -7,14 +7,6 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
-CREATE TABLE `Role` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'User',
-  `createdAt` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-  `updatedAt` datetime(3) DEFAULT NULL,
-  `deletedAt` datetime(3) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `Role` (`id`, `name`, `createdAt`, `updatedAt`, `deletedAt`) VALUES
 (1, 'User', '2024-03-04 15:25:26.000', NULL, NULL);

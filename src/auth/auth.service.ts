@@ -1,11 +1,11 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { PrismaService } from 'src/prisma.servcie';
 import { RegisterUserDto } from './dto/registerUserDto.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
-import { AuthPayLoadDto } from './dto/auth.dto';
+import { AuthPayLoadDto, ChangePasswordDto, forgetPasswordDto } from './dto/auth.dto';
 import { resolve } from 'path';
 @Injectable()
 export class AuthService {
@@ -27,7 +27,6 @@ export class AuthService {
         },
       },
     });
-    await new Promise(resolve => setTimeout(resolve,2000))
     if(!user){
       throw new HttpException({message: "Account is not exist"},HttpStatus.UNAUTHORIZED)
   }
@@ -117,5 +116,28 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
     }
+  }
+  async forgetPassword(data: forgetPasswordDto): Promise<Boolean> {
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        email:data.email,
+        deleteMark: false,
+      },
+    });
+    if(!user){
+      throw new BadRequestException('Email không tồn tại')
+    };
+    return true
+  }
+  async changePassword(data: ChangePasswordDto): Promise<any>{
+    const hashPassword = await this.hashPassword(data.password);
+    return await this.prismaService.user.update({
+      where: {
+        email:data.email,
+        deleteMark: false,
+      },data:{
+        password:hashPassword
+      }
+    });
   }
 }
