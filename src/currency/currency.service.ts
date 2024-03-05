@@ -76,6 +76,7 @@ export class CurrencyService {
       select: {
         name: true,
         createdAt: true,
+        deletedAt: true,
       },
       where: {
         OR: [
@@ -132,7 +133,7 @@ export class CurrencyService {
   }
   async delete(id: number):Promise<Currency>{
     return await this.prismaService.currency.update({
-      where:{id},
+      where:{id, deleteMark: false},
       data:{
         deleteMark: true,
         deletedAt: new Date()
@@ -142,7 +143,6 @@ export class CurrencyService {
   async forceDelete(id: number):Promise<Currency>{
     return await this.prismaService.currency.delete({
       where:{id, deleteMark:true},
-      
     })
   }
 }
