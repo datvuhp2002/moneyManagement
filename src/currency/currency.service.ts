@@ -63,7 +63,7 @@ export class CurrencyService {
     };
   }
   async create(data: CreateCurrencyDto) {
-    return this.prismaService.currency.create({data})
+    return await this.prismaService.currency.create({data})
   }
   async getAll(filters: CurrencyFilterType): Promise<CurrencyPaginationResponseType> {
     const items_per_page = Number(filters.items_per_page) || 10;

@@ -13,13 +13,13 @@ export class CurrencyController {
   constructor(private currencyService: CurrencyService) {}
   @Roles([Role.Admin])
   @Post()
-  create(@Body() body: CreateCurrencyDto) : Promise<Currency> {
-    return this.currencyService.create(body);
+  async create(@Body() body: CreateCurrencyDto) : Promise<Currency> {
+    return await this.currencyService.create(body);
   }
   @Roles([Role.Admin])
   @Get("/trash")
   async getAllTrash(@Param() filter: CurrencyFilterType):Promise<CurrencyPaginationResponseType>{
-      return this.currencyService.getAllTrash(filter)
+      return await this.currencyService.getAllTrash(filter)
   }
   @Get()
   async getAll(@Param() filter: CurrencyFilterType):Promise<CurrencyPaginationResponseType>{

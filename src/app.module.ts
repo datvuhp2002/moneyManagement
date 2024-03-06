@@ -18,6 +18,7 @@ import { CurrencyModule } from './currency/currency.module';
 import { WalletModule } from './wallet/wallet.module';
 import { CategoryGroupModule } from './category-group/category-group.module';
 import { CategoryModule } from './category/category.module';
+import { MonthlyBudgetModule } from './monthly-budget/monthly-budget.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { CategoryModule } from './category/category.module';
     WalletModule,
     CategoryGroupModule,
     CategoryModule,
+    MonthlyBudgetModule,
   ],
   controllers: [AppController],
   providers: [
