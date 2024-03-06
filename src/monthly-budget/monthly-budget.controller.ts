@@ -5,7 +5,6 @@ import { UpdateMonthlyBudgetDto } from './dto/update-monthly-budget.dto';
 import { Roles } from 'src/auth/decorator/roles.decorator';
 import { Role } from 'src/auth/dto/Role.enum';
 import { MonthlyBudget } from '@prisma/client';
-import { User } from 'src/user/decorator/user.decorator';
 import { Request } from 'express';
 import { Public } from '@prisma/client/runtime/library';
 
