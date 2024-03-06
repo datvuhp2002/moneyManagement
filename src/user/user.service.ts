@@ -118,6 +118,14 @@ export class UserService {
       },
     });
   }
+  async forgetPassword(email: string): Promise<User> {
+    return this.prismaService.user.findUnique({
+      where: {
+        email,
+        deleteMark: false,
+      },
+    });
+  }
   async update(id: number, data: UpdateUserDto): Promise<User> {
     return await this.prismaService.user.update({
       where: { id },
