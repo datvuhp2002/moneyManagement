@@ -45,6 +45,7 @@ model User {
   monthlyBudget   MonthlyBudget[]
 }
 
+//duong
 model Wallet {
   id             Int           @id @default(autoincrement())
   name           String
@@ -70,7 +71,7 @@ model Currency {
 
 model Transaction {
   id                        Int             @id @default(autoincrement())
-  recordDate                DateTime
+  recordDate                DateTime        @default(now()) @updatedAt
   transactionType           String
   category_id               Int
   bill                      Int

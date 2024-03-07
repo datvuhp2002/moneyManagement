@@ -55,17 +55,13 @@ export class AuthService {
       },
     });
     if (user) {
-      throw new HttpException(
-        { message: 'Email has been used' },
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new BadRequestException('Email đã tồn tại')
     }
     // step 2: hash password and store to db
     const hashPassword = await this.hashPassword(userData.password);
-    const res = await this.prismaService.user.create({
+    return await this.prismaService.user.create({
       data: { ...userData, password: hashPassword },
     });
-    return res;
   };
   private async VerifyPassword(
     password: string,

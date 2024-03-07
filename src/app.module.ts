@@ -16,6 +16,8 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { RoleModule } from './role/role.module';
 import { CategoryGroupModule } from './category-group/category-group.module';
 import { CategoryModule } from './category/category.module';
+import { TransactionModule } from './transaction/transaction.module';
+import { WalletModule } from './wallet/wallet.module';
 
 @Module({
   imports: [
@@ -31,6 +33,8 @@ import { CategoryModule } from './category/category.module';
     RoleModule,
     CategoryGroupModule,
     CategoryModule,
+    TransactionModule,
+    WalletModule,
   ],
   controllers: [AppController],
   providers: [

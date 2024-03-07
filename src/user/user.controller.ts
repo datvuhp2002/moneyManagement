@@ -46,11 +46,7 @@ export class UserController {
     console.log('get all user api', params);
     return this.userService.getAll(params);
   }
-  @Get('/forgetPassword/:email')
-  forgetPassword(@Param('email') email: string): Promise<User> {
-    console.log('get detail user api =>', email);
-    return this.userService.forgetPassword(email);
-  }
+ 
   @Get(':id')
   @Roles([Role.Admin])
   getDetail(@Param('id', ParseIntPipe) id: number): Promise<User> {
