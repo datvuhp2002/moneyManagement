@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateMonthlyBudgetDto, MonthlyBudgetFilterType, MonthlyBudgetPaginationResponseType } from './dto/create-monthly-budget.dto';
 import { UpdateMonthlyBudgetDto } from './dto/update-monthly-budget.dto';
 import { PrismaService } from 'src/prisma.servcie';
+import { MonthlyBudget } from '@prisma/client';
 
 @Injectable()
 export class MonthlyBudgetService {
@@ -64,15 +65,32 @@ export class MonthlyBudgetService {
   }
 
 
-  findOne(id: number) {
-    return `This action returns a #${id} monthlyBudget`;
+  async getDetail(id: number): Promise<MonthlyBudget> {
+    return await this.prismaService.monthlyBudget.findUnique({
+      where: {
+        id,
+      },
+    });}
+
+  async update(id: number, data: UpdateMonthlyBudgetDto): Promise<MonthlyBudget> {
+    return await this.prismaService.monthlyBudget.update({
+      where: { id },
+      data: {...data,amount:Number(data.amount)},
+    });
   }
 
-  update(id: number, updateMonthlyBudgetDto: UpdateMonthlyBudgetDto) {
-    return `This action updates a #${id} monthlyBudget`;
+  async delete(id: number):Promise<MonthlyBudget>{
+    return await this.prismaService.monthlyBudget.update({
+      where:{id},
+      data:{
+        deleteMark: true,
+        deletedAt: new Date()
+      }
+    })
   }
-
-  remove(id: number) {
-    return `This action removes a #${id} monthlyBudget`;
+  async forceDelete(id: number):Promise<MonthlyBudget>{
+    return await this.prismaService.monthlyBudget.delete({
+      where:{id, deleteMark:true},
+    })
   }
 }
