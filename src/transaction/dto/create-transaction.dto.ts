@@ -1,1 +1,7 @@
-export class CreateTransactionDto {}
+import { IsNotEmpty } from "class-validator";
+
+export class CreateTransactionDto {
+    @IsNotEmpty()
+    transactionType: string
+    
+}
