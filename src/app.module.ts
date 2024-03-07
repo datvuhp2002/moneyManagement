@@ -14,8 +14,11 @@ import { ConfigModule } from '@nestjs/config';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { RoleModule } from './role/role.module';
+import { CurrencyModule } from './currency/currency.module';
+import { WalletModule } from './wallet/wallet.module';
 import { CategoryGroupModule } from './category-group/category-group.module';
 import { CategoryModule } from './category/category.module';
+import { MonthlyBudgetModule } from './monthly-budget/monthly-budget.module';
 
 @Module({
   imports: [
@@ -29,8 +32,11 @@ import { CategoryModule } from './category/category.module';
       },
     ]),
     RoleModule,
+    CurrencyModule,
+    WalletModule,
     CategoryGroupModule,
     CategoryModule,
+    MonthlyBudgetModule,
   ],
   controllers: [AppController],
   providers: [
