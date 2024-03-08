@@ -74,11 +74,9 @@ model Transaction {
   id                        Int             @id @default(autoincrement())
   recordDate                DateTime        @default(now()) @updatedAt
   transactionType           String
-  category_id               Int
   bill                      Int
-  currency_id               Int
   note                      String
-  paymentImage              String
+  paymentImage              String?
   createdAt                 DateTime        @default(now())
   updatedAt                 DateTime?       @updatedAt
   deletedAt                 DateTime?
@@ -87,6 +85,10 @@ model Transaction {
   user_id                   Int
   ownership_wallet          Wallet          @relation(fields: [wallet_id], references: [id])
   wallet_id                 Int
+  ownership_category        Category        @relation(fields: [category_id], references: [id])
+  category_id               Int
+  ownership_currency        Currency        @relation(fields: [currency_id], references: [id])
+  currency_id               Int
   ownership_categoriesGroup CategoriesGroup @relation(fields: [categoriesGroup_id], references: [id])
   categoriesGroup_id        Int
 }
@@ -119,6 +121,7 @@ model Category {
   deletedAt                 DateTime?
   deleteMark                Boolean         @default(false)
   MonthlyBudget             MonthlyBudget[]
+  Transaction               Transaction[]
 }
 
 model MonthlyBudget {

@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, MinLength } from "class-validator";
+import { IsEmail, IsNotEmpty, IsNumber, MinLength } from "class-validator";
 export class AuthPayLoadDto {
   @IsNotEmpty()
   @IsEmail()
@@ -19,4 +19,14 @@ export class ChangePasswordDto{
   @IsNotEmpty()
   @MinLength(6)
   password: string;
+}
+export class payloadDto{
+  @IsNotEmpty()
+  @IsNumber()
+  id:number
+  @IsNotEmpty()
+  @IsEmail()
+  email:string
+  @IsNotEmpty()
+  roleName:string
 }

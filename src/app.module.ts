@@ -20,6 +20,7 @@ import { MonthlyBudgetModule } from './monthly-budget/monthly-budget.module';
 import { TransactionModule } from './transaction/transaction.module';
 import { WalletModule } from './wallet/wallet.module';
 import { CurrencyModule } from './currency/currency.module';
+import { PrismaService } from './prisma.servcie';
 @Module({
   imports: [
     AuthModule,
@@ -43,6 +44,7 @@ import { CurrencyModule } from './currency/currency.module';
   controllers: [AppController],
   providers: [
     AppService,
+    PrismaService,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
