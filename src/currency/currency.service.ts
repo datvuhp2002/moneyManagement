@@ -62,9 +62,14 @@ export class CurrencyService {
       itemsPerPage: items_per_page,
     };
   }
-  async create(data: CreateCurrencyDto) {
-    return await this.prismaService.currency.create({data})
+  async create(data: CreateCurrencyDto): Promise<Currency> {
+    return await this.prismaService.currency.create({data: {...data, exchange_rate:Number(data.exchange_rate)}})    
   }
+
+
+  // async create(data: CreateCurrencyDto):Promise<Currency>{
+  //   return this.prismaService.categoriesGroup.create({data:{...data, exchange_rate:Number(data.exchange_rate)}})
+  // }
   async getAll(filters: CurrencyFilterType): Promise<CurrencyPaginationResponseType> {
     const items_per_page = Number(filters.items_per_page) || 10;
     const page = Number(filters.page) || 1;
@@ -128,7 +133,7 @@ export class CurrencyService {
   async update(id: number, data: UpdateCurrencyDto): Promise<Currency> {
     return await this.prismaService.currency.update({
       where: { id },
-      data,
+      data: {...data,exchange_rate:Number(data.exchange_rate)},
     });
   }
   async delete(id: number):Promise<Currency>{
