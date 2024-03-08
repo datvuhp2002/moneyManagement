@@ -24,6 +24,7 @@ export class CategoryController {
   @Roles([Role.User,Role.Admin])
   @Get('/getAll')
   async getAllForUser(@Req() req:Request,@Param() filter: CategoryFilterType):Promise<CategoryPaginationResponseType> {
+    console.log("User",req.user)
     const userId = Number(req.user['id']);
     return await this.categoryService.getAllForUser(userId,filter);
   }
