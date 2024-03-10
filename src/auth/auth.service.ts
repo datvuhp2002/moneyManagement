@@ -5,7 +5,7 @@ import { RegisterUserDto } from './dto/registerUserDto.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
-import { AuthPayLoadDto, ChangePasswordDto, forgetPasswordDto } from './dto/auth.dto';
+import { AuthPayLoadDto, ChangePasswordDto, forgetPasswordDto, payloadDto } from './dto/auth.dto';
 import { resolve } from 'path';
 @Injectable()
 export class AuthService {
@@ -37,14 +37,14 @@ export class AuthService {
     }
     return user;
   }
-  // Promise<{ access_token: string; refresh_token: string }>
-  login = async (user: any) => {
+  
+   login = async (user: any): Promise<{ access_token: string; refresh_token: string }>=> {
     const payload = {
       id: user.id,
       email: user.email,
-      roleName: user.ownership_role.name,
+      roleName: user.ownership_role.name
     };
-    return this.generateToken(payload);
+    return await this.generateToken(payload);
   };
   register = async (userData: RegisterUserDto): Promise<User> => {
     // step 1 : checking email has already used
@@ -69,7 +69,7 @@ export class AuthService {
   ): Promise<boolean> {
     return await bcrypt.compareSync(password, hashedPassword);
   }
-  private async generateToken(payload: { id: number; email: string }) {
+  private async generateToken(payload: payloadDto) {
     const access_token = await this.jwtService.signAsync(payload);
     const refresh_token = await this.jwtService.signAsync(payload, {
       secret: this.configService.get<string>('SECRET_REFRESH_TOKEN'),
@@ -99,7 +99,7 @@ export class AuthService {
         where: { id: verify.id, refresh_token },
       });
       if (checkExist) {
-        return this.generateToken({ id: verify.id, email: verify.email });
+        return this.generateToken({id: verify.id, email: verify.email,roleName: verify.roleName});
       } else {
         throw new HttpException(
           'refresh token is not valid',

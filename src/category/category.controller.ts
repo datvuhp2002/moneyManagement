@@ -3,10 +3,10 @@ import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Request } from 'express';
-import { Category } from '@prisma/client';
 import { CategoryFilterType, CategoryPaginationResponseType } from './dto/category-filter.dto';
 import { Roles } from 'src/auth/decorator/roles.decorator';
 import { Role } from 'src/auth/dto/Role.enum';
+import { Category } from '@prisma/client';
 @Controller('category')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
@@ -24,6 +24,7 @@ export class CategoryController {
   @Roles([Role.User,Role.Admin])
   @Get('/getAll')
   async getAllForUser(@Req() req:Request,@Param() filter: CategoryFilterType):Promise<CategoryPaginationResponseType> {
+    console.log("User",req.user)
     const userId = Number(req.user['id']);
     return await this.categoryService.getAllForUser(userId,filter);
   }
@@ -52,5 +53,4 @@ export class CategoryController {
   async delete(@Param('id',ParseIntPipe) id: number) {
     return await this.categoryService.delete(+id);
   }
-
 }
