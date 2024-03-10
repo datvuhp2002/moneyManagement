@@ -20,6 +20,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { Request } from 'express';
 import { ChangePasswordDto, forgetPasswordDto } from './dto/auth.dto';
 import { getUser } from 'src/user/decorator/user.decorator';
+import { LocalAuthGuard } from './guards/local.guard';
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
@@ -34,13 +35,12 @@ export class AuthController {
   register(@Body() body: RegisterUserDto): Promise<User> {
     return this.authService.register(body);
   }
-  @UseGuards(AuthGuard('local'))
+  @UseGuards(LocalAuthGuard)
   @Public()
   @Post('login')
   async login(@Req() req:Request) {
     return await this.authService.login(req.user);
   }
- 
   @Post('refresh_token')
   @Public()
   async refreshToken(@Body() { refresh_token }): Promise<any> {

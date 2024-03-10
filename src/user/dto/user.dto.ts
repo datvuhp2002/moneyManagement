@@ -1,9 +1,6 @@
-import { User } from '@prisma/client';
 import {
   IsEmail,
   IsNotEmpty,
-  isNotEmpty,
-  IsOptional,
   MinLength,
 } from 'class-validator';
 export class CreateUserDto {
@@ -15,7 +12,6 @@ export class CreateUserDto {
   @IsNotEmpty()
   @MinLength(6)
   password: string;
-  role_id: number;
 }
 export interface UserFilterType {
   items_per_page?: number;
@@ -33,15 +29,16 @@ export interface UserPaginationResponseType {
   itemsPerPage?: number;
 }
 export class UpdateUserDto {
+  @IsNotEmpty()
   username: string;
-  avatar?: string;
+  @IsNotEmpty()
+  email: string;
+  phone?:number;
+  name?:string;
 }
 export class SoftDeleteUserDto {
   deleteMark: boolean;
   deletedAt: Date;
-}
-export class softMultipleDeleteUserDto {
-  data: { deleteMark: boolean; deletedAt: Date }[];
 }
 export class UploadAvatarResult {
   @IsNotEmpty()
