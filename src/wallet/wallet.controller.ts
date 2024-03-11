@@ -1,34 +1,54 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, ParseIntPipe, Put } from '@nestjs/common';
 import { WalletService } from './wallet.service';
-import { CreateWalletDto } from './dto/create-wallet.dto';
+import { CreateWalletDto, WalletFilterType, WalletPaginationResponseType } from './dto/create-wallet.dto';
 import { UpdateWalletDto } from './dto/update-wallet.dto';
+import { Roles } from 'src/auth/decorator/roles.decorator';
+import { Role } from 'src/auth/dto/Role.enum';
+import { Wallet } from '@prisma/client';
+import { Request } from 'express';
+import { UpdateCurrencyDto } from 'src/currency/dto/update-currency.dto';
 
 @Controller('wallet')
 export class WalletController {
   constructor(private readonly walletService: WalletService) {}
 
+  @Roles([Role.Admin, Role.User])
   @Post()
-  create(@Body() createWalletDto: CreateWalletDto) {
-    return this.walletService.create(createWalletDto);
+  async create(@Req() req: Request,@Body() body: CreateWalletDto) : Promise<Wallet> {
+    const userId = Number(req.user['id'])
+    return await this.walletService.create(userId, body);
+  }
+
+  @Roles([Role.Admin])
+  @Get("/trash")
+  async getAllTrash(@Param() filter: WalletFilterType):Promise<WalletPaginationResponseType>{
+      return await this.walletService.getAllTrash(filter)
   }
 
   @Get()
-  findAll() {
-    return this.walletService.findAll();
+  async getAll(@Param() filter: WalletFilterType):Promise<WalletPaginationResponseType>{
+      return await this.walletService.getAll(filter)
   }
 
+  @Roles([Role.Admin, Role.User])
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.walletService.findOne(+id);
+  async getDetail(@Param('id', ParseIntPipe) id: number): Promise<Wallet> {
+  return await this.walletService.getDetail(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateWalletDto: UpdateWalletDto) {
-    return this.walletService.update(+id, updateWalletDto);
+  @Roles([Role.Admin])
+  @Put(':id')
+  async update(@Param('id', ParseIntPipe) id: number, @Body() data: UpdateWalletDto): Promise<Wallet> {
+    return await this.walletService.update(id, data);
   }
-
+  @Roles([Role.Admin])
+  @Delete('force-delete/:id')
+  async forceDelete(@Param('id',ParseIntPipe) id:number):Promise<Wallet>{
+      return await this.walletService.forceDelete(id)
+  }
+  @Roles([Role.Admin])
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.walletService.remove(+id);
+  async delete(@Param('id',ParseIntPipe) id:number):Promise<Wallet>{
+      return await this.walletService.delete(id)
   }
 }
