@@ -7,6 +7,8 @@ import { CategoryFilterType, CategoryPaginationResponseType } from './dto/catego
 import { Roles } from 'src/auth/decorator/roles.decorator';
 import { Role } from 'src/auth/dto/Role.enum';
 import { Category } from '@prisma/client';
+import { ApiTags } from '@nestjs/swagger';
+@ApiTags('Category')
 @Controller('category')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}

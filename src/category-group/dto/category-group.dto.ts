@@ -1,13 +1,18 @@
+import { ApiProperty } from "@nestjs/swagger";
 import { IsEmail, IsNotEmpty, MinLength } from "class-validator";
 
 export class CreateCategoryGroupDto {
     @IsNotEmpty()
+    @ApiProperty()
     name: string;
+    @ApiProperty()
     @IsNotEmpty()
     note:string;
 }
 export class UpdateCategoryGroupDto {
+  @ApiProperty()
     name: string;
+    @ApiProperty()
     note:string;
 }
 export interface CategoryGroupFilterType {
