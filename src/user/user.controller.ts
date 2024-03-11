@@ -8,7 +8,6 @@ import {
   Param,
   Body,
   Delete,
-  ParseArrayPipe,
   Req,
   UploadedFile,
   UseInterceptors,
@@ -30,6 +29,7 @@ import { storageConfig } from 'helpers/config';
 import { extname } from 'path';
 import { Roles } from 'src/auth/decorator/roles.decorator';
 import { Role } from 'src/auth/dto/Role.enum';
+import { Request } from 'express';
 @ApiTags('Users')
 @Controller('users')
 export class UserController {
@@ -37,8 +37,13 @@ export class UserController {
   @Post()
   @Roles([Role.Admin])
   create(@Body() body: CreateUserDto): Promise<User> {
-    console.log('create user api', body);
     return this.userService.create(body);
+  }
+  @Get('trash')
+  @Roles([Role.Admin])
+  trash(@Query() params: UserFilterType): Promise<UserPaginationResponseType> {
+    console.log('get all user api', params);
+    return this.userService.trash(params);
   }
   @Get()
   @Roles([Role.Admin])
@@ -46,39 +51,18 @@ export class UserController {
     console.log('get all user api', params);
     return this.userService.getAll(params);
   }
- 
+  @Get('profile')
+  @Roles([Role.Admin,Role.User])
+  async getProfile(@Req() req:Request):Promise<User>{
+    const userId = Number(req.user['id'])
+    return await this.userService.getDetail(userId);
+  }
   @Get(':id')
   @Roles([Role.Admin])
   getDetail(@Param('id', ParseIntPipe) id: number): Promise<User> {
-    console.log('get detail user api =>', id);
     return this.userService.getDetail(id);
   }
-  @Put(':id')
-  @Roles([Role.Admin])
-  update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() body: UpdateUserDto,
-  ): Promise<User> {
-    console.log('update user api =>', id);
-    return this.userService.update(id, body);
-  }
-  @Delete(':id')
-  @Roles([Role.Admin])
-  deleteById(
-    @Param('id', ParseIntPipe) id: number,
-  ): Promise<SoftDeleteUserDto> {
-    console.log('delete user => ', id);
-    return this.userService.deleteById(id);
-  }
-  @Delete('multiple')
-  @Roles([Role.Admin])
-  multipleDelete(
-    @Query('ids', new ParseArrayPipe({ items: String, separator: ',' }))
-    ids: string[],
-  ) {
-    return this.userService.multipleDelete(ids);
-  }
-  @Post('upload-avatar')
+  @Put('upload-avatar')
   @Roles([Role.Admin, Role.User])
   @UseInterceptors(
     FileInterceptor('avatar', {
@@ -117,6 +101,33 @@ export class UserController {
       req.user.id,
       file.fieldname + '/' + file.filename,
     );
+  }
+  @Put(':id')
+  @Roles([Role.Admin])
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: UpdateUserDto,
+  ): Promise<User> {
+    console.log('update user api =>', id);
+    return this.userService.update(id, body);
+  }
+  @Put()
+  @Roles([Role.Admin, Role.User])
+  updateForUser(
+    @Req() req:Request,
+    @Body() body: UpdateUserDto,
+  ): Promise<User> {
+    const userId = Number(req.user['id'])
+    console.log('update user api =>', userId);
+    return this.userService.update(userId, body);
+  }
+  @Delete(':id')
+  @Roles([Role.Admin])
+  deleteById(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<SoftDeleteUserDto> {
+    console.log('delete user => ', id);
+    return this.userService.deleteById(id);
   }
 
 }

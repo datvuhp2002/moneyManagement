@@ -9,7 +9,8 @@ import { Role } from 'src/auth/dto/Role.enum';
 import { extname } from 'path';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { storageConfig } from 'helpers/config';
-
+import { ApiTags } from '@nestjs/swagger';
+@ApiTags("Transaction")
 @Controller('transaction')
 export class TransactionController {
   constructor(private readonly transactionService: TransactionService) {}

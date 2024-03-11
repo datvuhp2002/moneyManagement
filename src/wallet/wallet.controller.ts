@@ -7,7 +7,8 @@ import { Role } from 'src/auth/dto/Role.enum';
 import { Wallet } from '@prisma/client';
 import { Request } from 'express';
 import { UpdateCurrencyDto } from 'src/currency/dto/update-currency.dto';
-
+import { ApiTags } from '@nestjs/swagger';
+@ApiTags("Wallet")
 @Controller('wallet')
 export class WalletController {
   constructor(private readonly walletService: WalletService) {}

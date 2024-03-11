@@ -7,7 +7,8 @@ import { Currency } from '@prisma/client';
 import { Request } from 'express';
 import { Roles } from 'src/auth/decorator/roles.decorator';
 import { Role } from 'src/auth/dto/Role.enum';
-
+import { ApiTags } from '@nestjs/swagger';
+@ApiTags('Currency')
 @Controller('currency')
 export class CurrencyController {
   constructor(private currencyService: CurrencyService) {}

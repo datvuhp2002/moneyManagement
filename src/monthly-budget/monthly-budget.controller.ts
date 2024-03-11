@@ -7,7 +7,8 @@ import { Role } from 'src/auth/dto/Role.enum';
 import { MonthlyBudget } from '@prisma/client';
 import { Request } from 'express';
 import { Public } from 'src/auth/decorator/auth.decorator';
-
+import { ApiTags } from '@nestjs/swagger';
+@ApiTags('Monthly-budget')
 @Controller('monthly-budget')
 export class MonthlyBudgetController {
   constructor(private readonly monthlyBudgetService: MonthlyBudgetService) {}

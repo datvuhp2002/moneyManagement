@@ -17,7 +17,7 @@ export class AuthService {
   async validateUser({ email, password }: AuthPayLoadDto): Promise<User> {
     const user = await this.prismaService.user.findUnique({
       where: {
-        email,
+        email
       },
       include: {
         ownership_role: {

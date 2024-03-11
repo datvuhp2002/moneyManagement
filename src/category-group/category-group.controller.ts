@@ -5,7 +5,8 @@ import { CategoriesGroup } from '@prisma/client';
 import { Request } from 'express';
 import { Roles } from 'src/auth/decorator/roles.decorator';
 import { Role } from 'src/auth/dto/Role.enum';
-
+import { ApiTags } from '@nestjs/swagger';
+@ApiTags('Category-group')
 @Controller('category-group')
 export class CategoryGroupController {
     constructor(private categoryGroupService: CategoryGroupService){}
