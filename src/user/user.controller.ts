@@ -68,7 +68,6 @@ export class UserController {
   @UseInterceptors(
     FileInterceptor('avatar', {
       storage: storageConfig('avatar'),
-      // validate file before upload
       fileFilter: (req, file, cb) => {
         const ext = extname(file.originalname);
         const allowedExtArr = ['.jpg', '.png', '.jpeg'];
@@ -87,7 +86,6 @@ export class UserController {
       },
     }),
   )
-  @Roles([Role.Admin, Role.User])
   uploadAvatar(
     @Req() req: any,
     @UploadedFile() file: Express.Multer.File,
@@ -114,13 +112,13 @@ export class UserController {
   }
   @Put()
   @Roles([Role.Admin, Role.User])
+
   updateForUser(
-    @Req() req:Request,
-    @Body() body: UpdateUserDto,
+    @Req() req: Request,
+    @Body() updateUserInformation: UpdateUserDto,
   ): Promise<User> {
     const userId = Number(req.user['id'])
-    console.log('update user api =>', userId);
-    return this.userService.update(userId, body);
+    return this.userService.update(userId, updateUserInformation);
   }
   @Delete(':id')
   @Roles([Role.Admin])

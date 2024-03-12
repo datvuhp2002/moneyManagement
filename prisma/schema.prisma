@@ -27,7 +27,7 @@ model User {
   email           String            @unique
   password        String
   name            String?
-  phone           Int?
+  phone           String?
   note            String?
   ownership_role  Role              @relation(fields: [role_id], references: [id])
   role_id         Int               @default(1)

@@ -32,7 +32,7 @@ export class DetailUser{
   username: string
   email:string
   name:string
-  phone:number
+  phone:string
   note:string
   avatar:string
 }
@@ -40,8 +40,9 @@ export class UpdateUserDto {
   @IsNotEmpty()
   username: string;
   @IsNotEmpty()
+  @IsEmail()
   email: string;
-  phone?:number;
+  phone?:string;
   name?:string;
 }
 export class SoftDeleteUserDto {
