@@ -28,6 +28,14 @@ export interface UserPaginationResponseType {
   previousPage?: number;
   itemsPerPage?: number;
 }
+export class DetailUser{
+  username: string
+  email:string
+  name:string
+  phone:number
+  note:string
+  avatar:string
+}
 export class UpdateUserDto {
   @IsNotEmpty()
   username: string;

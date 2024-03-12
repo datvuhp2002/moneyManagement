@@ -8,6 +8,7 @@ import { User } from '@prisma/client';
 import { PrismaService } from 'src/prisma.servcie';
 import {
   CreateUserDto,
+  DetailUser,
   SoftDeleteUserDto,
   UpdateUserDto,
   UploadAvatarResult,
@@ -179,11 +180,19 @@ export class UserService {
       itemsPerPage: items_per_page,
     };
   }
-  async getDetail(id: number): Promise<User> {
+  async getDetail(id: number): Promise<DetailUser> {
     return this.prismaService.user.findUnique({
       where: {
         id,
         deleteMark: false,
+      },
+      select:{
+        username: true,
+        email:true,
+        name:true,
+        phone:true,
+        note:true,
+        avatar:true,
       },
     });
   }
