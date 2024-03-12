@@ -44,8 +44,7 @@ export class TransactionController {
         throw new BadRequestException(req.fileValidationError);
       }
       if(file){
-        const fileName = file.fieldname + '/' + file.filename;
-        createTransactionDto.paymentImage = fileName
+        createTransactionDto.paymentImage = file.fieldname + '/' + file.filename;
       }else{
         createTransactionDto.paymentImage = null
       }

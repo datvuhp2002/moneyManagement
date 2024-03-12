@@ -16,6 +16,7 @@ import {
 import { UserService } from './user.service';
 import {
   CreateUserDto,
+  DetailUser,
   SoftDeleteUserDto,
   UpdateUserDto,
   UploadAvatarResult,
@@ -53,13 +54,13 @@ export class UserController {
   }
   @Get('profile')
   @Roles([Role.Admin,Role.User])
-  async getProfile(@Req() req:Request):Promise<User>{
+  async getProfile(@Req() req:Request):Promise<DetailUser>{
     const userId = Number(req.user['id'])
     return await this.userService.getDetail(userId);
   }
   @Get(':id')
   @Roles([Role.Admin])
-  getDetail(@Param('id', ParseIntPipe) id: number): Promise<User> {
+  getDetail(@Param('id', ParseIntPipe) id: number): Promise<DetailUser> {
     return this.userService.getDetail(id);
   }
   @Put('upload-avatar')
