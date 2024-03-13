@@ -7,7 +7,9 @@ import { Role } from 'src/auth/dto/Role.enum';
 import { MonthlyBudget } from '@prisma/client';
 import { Request } from 'express';
 import { Public } from 'src/auth/decorator/auth.decorator';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
+@ApiBearerAuth()
+
 @ApiTags('Monthly-budget')
 @Controller('monthly-budget')
 export class MonthlyBudgetController {
@@ -20,6 +22,11 @@ export class MonthlyBudgetController {
     return await this.monthlyBudgetService.create(userId,body);
   }
   @Roles([Role.Admin, Role.User])
+  @ApiQuery({name:"page",required:false})
+  @ApiQuery({name:"items_per_page",required:false})
+  @ApiQuery({name:"search",required:false})
+  @ApiQuery({name:"previousPage",required:false})
+  @ApiQuery({name:"nextPage",required:false})
   @Get()
   async getAll(@Param() filter: MonthlyBudgetFilterType):Promise<MonthlyBudgetPaginationResponseType>{
       return await this.monthlyBudgetService.getAll(filter)

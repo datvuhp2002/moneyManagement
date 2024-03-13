@@ -9,7 +9,8 @@ import { Role } from 'src/auth/dto/Role.enum';
 import { extname } from 'path';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { storageConfig } from 'helpers/config';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
+@ApiBearerAuth()
 @ApiTags("Transaction")
 @Controller('transaction')
 export class TransactionController {
@@ -53,15 +54,30 @@ export class TransactionController {
   }
   @Roles([Role.Admin])
   @Get()
+  @ApiQuery({name:"page",required:false})
+  @ApiQuery({name:"items_per_page",required:false})
+  @ApiQuery({name:"search",required:false})
+  @ApiQuery({name:"previousPage",required:false})
+  @ApiQuery({name:"nextPage",required:false})
   async getAll(@Param() filter: TransactionFilterType):Promise<TransactionPaginationResponseType> {
     return await this.transactionService.getAll(filter);
   }
   @Roles([Role.Admin])
   @Get("trash")
+  @ApiQuery({name:"page",required:false})
+  @ApiQuery({name:"items_per_page",required:false})
+  @ApiQuery({name:"search",required:false})
+  @ApiQuery({name:"previousPage",required:false})
+  @ApiQuery({name:"nextPage",required:false})
   async trash(@Param() filter: TransactionFilterType):Promise<TransactionPaginationResponseType> {
     return await this.transactionService.trash(filter);
   }
   @Roles([Role.User])
+  @ApiQuery({name:"page",required:false})
+  @ApiQuery({name:"items_per_page",required:false})
+  @ApiQuery({name:"search",required:false})
+  @ApiQuery({name:"previousPage",required:false})
+  @ApiQuery({name:"nextPage",required:false})
   @Get('getAll')
   async getAllForUser(@Req() req: Request,@Param() filter: TransactionFilterType):Promise<TransactionPaginationResponseType> {
     const userId = req.user['id']

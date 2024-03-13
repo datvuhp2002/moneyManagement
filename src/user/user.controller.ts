@@ -24,13 +24,14 @@ import {
   UserPaginationResponseType,
 } from './dto/user.dto';
 import { User } from '@prisma/client';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { storageConfig } from 'helpers/config';
 import { extname } from 'path';
 import { Roles } from 'src/auth/decorator/roles.decorator';
 import { Role } from 'src/auth/dto/Role.enum';
 import { Request } from 'express';
+@ApiBearerAuth()
 @ApiTags('Users')
 @Controller('users')
 export class UserController {
@@ -41,12 +42,22 @@ export class UserController {
     return this.userService.create(body);
   }
   @Get('trash')
+  @ApiQuery({name:"page",required:false})
+  @ApiQuery({name:"items_per_page",required:false})
+  @ApiQuery({name:"search",required:false})
+  @ApiQuery({name:"previousPage",required:false})
+  @ApiQuery({name:"nextPage",required:false})
   @Roles([Role.Admin])
   trash(@Query() params: UserFilterType): Promise<UserPaginationResponseType> {
     console.log('get all user api', params);
     return this.userService.trash(params);
   }
   @Get()
+  @ApiQuery({name:"page",required:false})
+  @ApiQuery({name:"items_per_page",required:false})
+  @ApiQuery({name:"search",required:false})
+  @ApiQuery({name:"previousPage",required:false})
+  @ApiQuery({name:"nextPage",required:false})
   @Roles([Role.Admin])
   getAll(@Query() params: UserFilterType): Promise<UserPaginationResponseType> {
     console.log('get all user api', params);

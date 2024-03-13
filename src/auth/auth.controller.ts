@@ -13,12 +13,12 @@ import {
 import { LoginUserDto, RegisterUserDto } from './dto/registerUserDto.dto';
 import { AuthService } from './auth.service';
 import { User } from '@prisma/client';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { Public } from './decorator/auth.decorator';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { Request } from 'express';
-import { ChangePasswordDto, forgetPasswordDto } from './dto/auth.dto';
+import { AuthPayLoadDto, ChangePasswordDto, forgetPasswordDto } from './dto/auth.dto';
 import { getUser } from 'src/user/decorator/user.decorator';
 import { LocalAuthGuard } from './guards/local.guard';
 @ApiTags('Auth')
@@ -36,6 +36,7 @@ export class AuthController {
     return this.authService.register(body);
   }
   @UseGuards(LocalAuthGuard)
+  @ApiBody({ type: AuthPayLoadDto })
   @Public()
   @Post('login')
   async login(@Req() req:Request) {

@@ -7,7 +7,9 @@ import { Currency } from '@prisma/client';
 import { Request } from 'express';
 import { Roles } from 'src/auth/decorator/roles.decorator';
 import { Role } from 'src/auth/dto/Role.enum';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
+@ApiBearerAuth()
+
 @ApiTags('Currency')
 @Controller('currency')
 export class CurrencyController {
@@ -19,10 +21,20 @@ export class CurrencyController {
   }
   @Roles([Role.Admin])
   @Get("/trash")
+  @ApiQuery({name:"page",required:false})
+  @ApiQuery({name:"items_per_page",required:false})
+  @ApiQuery({name:"search",required:false})
+  @ApiQuery({name:"previousPage",required:false})
+  @ApiQuery({name:"nextPage",required:false})
   async getAllTrash(@Param() filter: CurrencyFilterType):Promise<CurrencyPaginationResponseType>{
       return await this.currencyService.getAllTrash(filter)
   }
   @Get()
+  @ApiQuery({name:"page",required:false})
+  @ApiQuery({name:"items_per_page",required:false})
+  @ApiQuery({name:"search",required:false})
+  @ApiQuery({name:"previousPage",required:false})
+  @ApiQuery({name:"nextPage",required:false})
   async getAll(@Param() filter: CurrencyFilterType):Promise<CurrencyPaginationResponseType>{
       return await this.currencyService.getAll(filter)
   }
