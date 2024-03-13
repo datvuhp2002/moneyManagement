@@ -8,6 +8,7 @@ export class CreateCurrencyDto {
     @ApiProperty()
     @IsNotEmpty()
     exchange_rate:Number;
+    
 }
 export interface CurrencyFilterType {
     items_per_page?: number;

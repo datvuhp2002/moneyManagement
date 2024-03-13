@@ -66,16 +66,12 @@ export class CurrencyService {
     return await this.prismaService.currency.create({data: {...data, exchange_rate:Number(data.exchange_rate)}})    
   }
 
-
-  // async create(data: CreateCurrencyDto):Promise<Currency>{
-  //   return this.prismaService.categoriesGroup.create({data:{...data, exchange_rate:Number(data.exchange_rate)}})
-  // }
   async getAll(filters: CurrencyFilterType): Promise<CurrencyPaginationResponseType> {
     const items_per_page = Number(filters.items_per_page) || 10;
     const page = Number(filters.page) || 1;
     const search = filters.search || '';
     const skip = page > 1 ? (page - 1) * items_per_page : 0;
-    const roles = await this.prismaService.currency.findMany({
+    const currency = await this.prismaService.currency.findMany({
       take: items_per_page,
       skip,
       select: {
@@ -113,7 +109,7 @@ export class CurrencyService {
     const nextPage = page + 1 > lastPage ? null : page + 1;
     const previousPage = page - 1 < 1 ? null : page - 1;
     return {
-      data: roles,
+      data: currency,
       total,
       nextPage,
       previousPage,
@@ -121,6 +117,65 @@ export class CurrencyService {
       itemsPerPage: items_per_page,
     };
   }
+
+  async getAllForUser(id: number,filters: CurrencyFilterType): Promise<CurrencyPaginationResponseType> {
+    const items_per_page = Number(filters.items_per_page) || 10;
+    const page = Number(filters.page) || 1;
+    const search = filters.search || '';
+    const skip = page > 1 ? (page - 1) * items_per_page : 0;
+    const currency = await this.prismaService.currency.findMany({
+      take: items_per_page,
+      skip,
+      where: {
+        id,
+        OR:[
+            {
+                name: {
+                  contains: search,
+                },
+              },
+        ],
+        AND: [
+          
+          {
+            deleteMark: false,
+          },
+        ],
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+    console.log('currency = ', currency)
+    const total = await this.prismaService.categoriesGroup.count({
+        where: {
+            user_id: id,
+            OR:[
+                {
+                    name: {
+                      contains: search,
+                    },
+                  },
+            ],
+            AND: [
+              {
+                deleteMark: false,
+              },
+            ],
+          },
+    });
+    const lastPage = Math.ceil(total / items_per_page);
+    const nextPage = page + 1 > lastPage ? null : page + 1;
+    const previousPage = page - 1 < 1 ? null : page - 1;
+    return {
+      data: currency,
+      total,
+      nextPage,
+      previousPage,
+      currentPage: page,
+      itemsPerPage: items_per_page,
+    };
+}
 
   async getDetail(id: number): Promise<Currency> {
     return await this.prismaService.currency.findUnique({
