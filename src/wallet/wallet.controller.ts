@@ -7,7 +7,9 @@ import { Role } from 'src/auth/dto/Role.enum';
 import { Wallet } from '@prisma/client';
 import { Request } from 'express';
 import { UpdateCurrencyDto } from 'src/currency/dto/update-currency.dto';
-
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
+@ApiBearerAuth()
+@ApiTags("Wallet")
 @Controller('wallet')
 export class WalletController {
   constructor(private readonly walletService: WalletService) {}
@@ -21,6 +23,11 @@ export class WalletController {
 
   @Roles([Role.Admin])
   @Get("/trash")
+  @ApiQuery({name:"page",required:false})
+  @ApiQuery({name:"items_per_page",required:false})
+  @ApiQuery({name:"search",required:false})
+  @ApiQuery({name:"previousPage",required:false})
+  @ApiQuery({name:"nextPage",required:false})
   async getAllTrash(@Param() filter: WalletFilterType):Promise<WalletPaginationResponseType>{
       return await this.walletService.getAllTrash(filter)
   }
@@ -32,6 +39,11 @@ export class WalletController {
   }
 
   @Get()
+  @ApiQuery({name:"page",required:false})
+  @ApiQuery({name:"items_per_page",required:false})
+  @ApiQuery({name:"search",required:false})
+  @ApiQuery({name:"previousPage",required:false})
+  @ApiQuery({name:"nextPage",required:false})
   async getAll(@Param() filter: WalletFilterType):Promise<WalletPaginationResponseType>{
       return await this.walletService.getAll(filter)
   }

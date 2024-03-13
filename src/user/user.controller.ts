@@ -8,7 +8,6 @@ import {
   Param,
   Body,
   Delete,
-  ParseArrayPipe,
   Req,
   UploadedFile,
   UseInterceptors,
@@ -17,6 +16,7 @@ import {
 import { UserService } from './user.service';
 import {
   CreateUserDto,
+  DetailUser,
   SoftDeleteUserDto,
   UpdateUserDto,
   UploadAvatarResult,
@@ -24,12 +24,14 @@ import {
   UserPaginationResponseType,
 } from './dto/user.dto';
 import { User } from '@prisma/client';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { storageConfig } from 'helpers/config';
 import { extname } from 'path';
 import { Roles } from 'src/auth/decorator/roles.decorator';
 import { Role } from 'src/auth/dto/Role.enum';
+import { Request } from 'express';
+@ApiBearerAuth()
 @ApiTags('Users')
 @Controller('users')
 export class UserController {
@@ -37,53 +39,46 @@ export class UserController {
   @Post()
   @Roles([Role.Admin])
   create(@Body() body: CreateUserDto): Promise<User> {
-    console.log('create user api', body);
     return this.userService.create(body);
   }
+  @Get('trash')
+  @ApiQuery({name:"page",required:false})
+  @ApiQuery({name:"items_per_page",required:false})
+  @ApiQuery({name:"search",required:false})
+  @ApiQuery({name:"previousPage",required:false})
+  @ApiQuery({name:"nextPage",required:false})
+  @Roles([Role.Admin])
+  trash(@Query() params: UserFilterType): Promise<UserPaginationResponseType> {
+    console.log('get all user api', params);
+    return this.userService.trash(params);
+  }
   @Get()
+  @ApiQuery({name:"page",required:false})
+  @ApiQuery({name:"items_per_page",required:false})
+  @ApiQuery({name:"search",required:false})
+  @ApiQuery({name:"previousPage",required:false})
+  @ApiQuery({name:"nextPage",required:false})
   @Roles([Role.Admin])
   getAll(@Query() params: UserFilterType): Promise<UserPaginationResponseType> {
     console.log('get all user api', params);
     return this.userService.getAll(params);
   }
- 
+  @Get('profile')
+  @Roles([Role.Admin,Role.User])
+  async getProfile(@Req() req:Request):Promise<DetailUser>{
+    const userId = Number(req.user['id'])
+    return await this.userService.getDetail(userId);
+  }
   @Get(':id')
   @Roles([Role.Admin])
-  getDetail(@Param('id', ParseIntPipe) id: number): Promise<User> {
-    console.log('get detail user api =>', id);
+  getDetail(@Param('id', ParseIntPipe) id: number): Promise<DetailUser> {
     return this.userService.getDetail(id);
   }
-  @Put(':id')
-  @Roles([Role.Admin])
-  update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() body: UpdateUserDto,
-  ): Promise<User> {
-    console.log('update user api =>', id);
-    return this.userService.update(id, body);
-  }
-  @Delete(':id')
-  @Roles([Role.Admin])
-  deleteById(
-    @Param('id', ParseIntPipe) id: number,
-  ): Promise<SoftDeleteUserDto> {
-    console.log('delete user => ', id);
-    return this.userService.deleteById(id);
-  }
-  @Delete('multiple')
-  @Roles([Role.Admin])
-  multipleDelete(
-    @Query('ids', new ParseArrayPipe({ items: String, separator: ',' }))
-    ids: string[],
-  ) {
-    return this.userService.multipleDelete(ids);
-  }
-  @Post('upload-avatar')
+  @Put('upload-avatar')
   @Roles([Role.Admin, Role.User])
   @UseInterceptors(
     FileInterceptor('avatar', {
       storage: storageConfig('avatar'),
-      // validate file before upload
       fileFilter: (req, file, cb) => {
         const ext = extname(file.originalname);
         const allowedExtArr = ['.jpg', '.png', '.jpeg'];
@@ -102,7 +97,6 @@ export class UserController {
       },
     }),
   )
-  @Roles([Role.Admin, Role.User])
   uploadAvatar(
     @Req() req: any,
     @UploadedFile() file: Express.Multer.File,
@@ -117,6 +111,33 @@ export class UserController {
       req.user.id,
       file.fieldname + '/' + file.filename,
     );
+  }
+  @Put(':id')
+  @Roles([Role.Admin])
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: UpdateUserDto,
+  ): Promise<User> {
+    console.log('update user api =>', id);
+    return this.userService.update(id, body);
+  }
+  @Put()
+  @Roles([Role.Admin, Role.User])
+
+  updateForUser(
+    @Req() req: Request,
+    @Body() updateUserInformation: UpdateUserDto,
+  ): Promise<User> {
+    const userId = Number(req.user['id'])
+    return this.userService.update(userId, updateUserInformation);
+  }
+  @Delete(':id')
+  @Roles([Role.Admin])
+  deleteById(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<SoftDeleteUserDto> {
+    console.log('delete user => ', id);
+    return this.userService.deleteById(id);
   }
 
 }

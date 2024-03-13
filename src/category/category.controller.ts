@@ -7,6 +7,9 @@ import { CategoryFilterType, CategoryPaginationResponseType } from './dto/catego
 import { Roles } from 'src/auth/decorator/roles.decorator';
 import { Role } from 'src/auth/dto/Role.enum';
 import { Category } from '@prisma/client';
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
+@ApiBearerAuth()
+@ApiTags('Category')
 @Controller('category')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
@@ -18,11 +21,21 @@ export class CategoryController {
   }
   @Roles([Role.Admin])
   @Get('/trash')
+  @ApiQuery({name:"page",required:false})
+  @ApiQuery({name:"items_per_page",required:false})
+  @ApiQuery({name:"search",required:false})
+  @ApiQuery({name:"previousPage",required:false})
+  @ApiQuery({name:"nextPage",required:false})
   async trash(@Param() filter: CategoryFilterType):Promise<CategoryPaginationResponseType> {
     return await this.categoryService.trash(filter);
   }
   @Roles([Role.User,Role.Admin])
   @Get('/getAll')
+  @ApiQuery({name:"page",required:false})
+  @ApiQuery({name:"items_per_page",required:false})
+  @ApiQuery({name:"search",required:false})
+  @ApiQuery({name:"previousPage",required:false})
+  @ApiQuery({name:"nextPage",required:false})
   async getAllForUser(@Req() req:Request,@Param() filter: CategoryFilterType):Promise<CategoryPaginationResponseType> {
     console.log("User",req.user)
     const userId = Number(req.user['id']);
@@ -30,6 +43,11 @@ export class CategoryController {
   }
   @Roles([Role.Admin])
   @Get()
+  @ApiQuery({name:"page",required:false})
+  @ApiQuery({name:"items_per_page",required:false})
+  @ApiQuery({name:"search",required:false})
+  @ApiQuery({name:"previousPage",required:false})
+  @ApiQuery({name:"nextPage",required:false})
   async getAll(@Param() filter: CategoryFilterType):Promise<CategoryPaginationResponseType> {
     return await this.categoryService.getAll(filter);
   }

@@ -1,8 +1,11 @@
+import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty } from "class-validator";
 export class CreateWalletDto {
     @IsNotEmpty()
+    @ApiProperty()
     name:string;
     @IsNotEmpty()
+    @ApiProperty()
     amount:number;
 }
 export interface WalletFilterType {
