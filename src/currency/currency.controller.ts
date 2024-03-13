@@ -38,6 +38,12 @@ export class CurrencyController {
   async getAll(@Param() filter: CurrencyFilterType):Promise<CurrencyPaginationResponseType>{
       return await this.currencyService.getAll(filter)
   }
+  @Roles([Role.User])
+  @Get("/getAll")
+  async getAllForUser(@Req() req: Request,@Param() filter: CurrencyFilterType):Promise<CurrencyPaginationResponseType>{
+    const userId = Number(req.user['id']);
+    return this.currencyService.getAllForUser(userId, filter)
+  }
   @Public()
   @Get(':id')
   async getDetail(@Param('id', ParseIntPipe) id: number): Promise<Currency> {

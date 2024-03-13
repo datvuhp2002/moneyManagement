@@ -119,6 +119,67 @@ export class WalletService {
     };
   }
 
+  async getAllForUser(id: number,filters: WalletFilterType): Promise<WalletPaginationResponseType> {
+    const items_per_page = Number(filters.items_per_page) || 10;
+    const page = Number(filters.page) || 1;
+    const search = filters.search || '';
+    const skip = page > 1 ? (page - 1) * items_per_page : 0;
+    const wallet = await this.prismaService.wallet.findMany({
+      take: items_per_page,
+      skip,
+      where: {
+        user_id: id,
+        OR:[
+            {
+                name: {
+                  contains: search,
+                },
+              },
+        ],
+        AND: [
+          
+          {
+            deleteMark: false,
+          },
+        ],
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+    console.log('wallet = ', wallet)
+    const total = await this.prismaService.categoriesGroup.count({
+        where: {
+            user_id: id,
+            OR:[
+                {
+                    name: {
+                      contains: search,
+                    },
+                  },
+            ],
+            AND: [
+              {
+                deleteMark: false,
+              },
+            ],
+          },
+    });
+    const lastPage = Math.ceil(total / items_per_page);
+    const nextPage = page + 1 > lastPage ? null : page + 1;
+    const previousPage = page - 1 < 1 ? null : page - 1;
+    return {
+      data: wallet,
+      total,
+      nextPage,
+      previousPage,
+      currentPage: page,
+      itemsPerPage: items_per_page,
+    };
+}
+
+
+
   async getDetail(id: number): Promise<Wallet> {
     return await this.prismaService.wallet.findUnique({
       where: {
