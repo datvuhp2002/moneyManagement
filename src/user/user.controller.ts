@@ -42,17 +42,22 @@ export class UserController {
     return this.userService.create(body);
   }
   @Get('trash')
+  @ApiQuery({name:"page",required:false})
+  @ApiQuery({name:"items_per_page",required:false})
+  @ApiQuery({name:"search",required:false})
+  @ApiQuery({name:"previousPage",required:false})
+  @ApiQuery({name:"nextPage",required:false})
   @Roles([Role.Admin])
   trash(@Query() params: UserFilterType): Promise<UserPaginationResponseType> {
     console.log('get all user api', params);
     return this.userService.trash(params);
   }
   @Get()
-  @ApiQuery({name:"page"})
-  @ApiQuery({name:"items_per_page"})
-  @ApiQuery({name:"search"})
-  @ApiQuery({name:"previousPage"})
-  @ApiQuery({name:"nextPage"})
+  @ApiQuery({name:"page",required:false})
+  @ApiQuery({name:"items_per_page",required:false})
+  @ApiQuery({name:"search",required:false})
+  @ApiQuery({name:"previousPage",required:false})
+  @ApiQuery({name:"nextPage",required:false})
   @Roles([Role.Admin])
   getAll(@Query() params: UserFilterType): Promise<UserPaginationResponseType> {
     console.log('get all user api', params);
