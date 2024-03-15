@@ -18,6 +18,7 @@ export class AuthService {
     const user = await this.prismaService.user.findUnique({
       where: {
         email
+      
       },
       include: {
         ownership_role: {
@@ -27,6 +28,7 @@ export class AuthService {
         },
       },
     });
+    console.log(user)
     if(!user){
       throw new HttpException({message: "Account is not exist"},HttpStatus.UNAUTHORIZED)
   }
@@ -37,8 +39,7 @@ export class AuthService {
     }
     return user;
   }
-  
-   login = async (user: any): Promise<{ access_token: string; refresh_token: string }>=> {
+  login = async (user: any): Promise<{ access_token: string; refresh_token: string }>=> {
     const payload = {
       id: user.id,
       email: user.email,

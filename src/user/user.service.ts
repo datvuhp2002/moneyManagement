@@ -181,7 +181,7 @@ export class UserService {
     };
   }
   async getDetail(id: number): Promise<DetailUser> {
-    return this.prismaService.user.findUnique({
+    return await this.prismaService.user.findUnique({
       where: {
         id,
         deleteMark: false,
@@ -190,7 +190,6 @@ export class UserService {
         username: true,
         email:true,
         name:true,
-        phone:true,
         note:true,
         avatar:true,
       },

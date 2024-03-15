@@ -10,6 +10,7 @@ import { extname } from 'path';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { storageConfig } from 'helpers/config';
 import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { getUser } from 'src/user/decorator/user.decorator';
 @ApiBearerAuth()
 @ApiTags("Transaction")
 @Controller('transaction')
@@ -72,15 +73,15 @@ export class TransactionController {
   async trash(@Param() filter: TransactionFilterType):Promise<TransactionPaginationResponseType> {
     return await this.transactionService.trash(filter);
   }
-  @Roles([Role.User])
+  @Roles([Role.User,Role.Admin])
   @ApiQuery({name:"page",required:false})
   @ApiQuery({name:"items_per_page",required:false})
   @ApiQuery({name:"search",required:false})
   @ApiQuery({name:"previousPage",required:false})
   @ApiQuery({name:"nextPage",required:false})
   @Get('getAll')
-  async getAllForUser(@Req() req: Request,@Param() filter: TransactionFilterType):Promise<TransactionPaginationResponseType> {
-    const userId = req.user['id']
+  async getAllForUser(@getUser()user,@Param() filter: TransactionFilterType):Promise<TransactionPaginationResponseType> {
+    const userId = Number(user.id)
     return await this.transactionService.getAllForUser(userId,filter);
   }
   @Get(':id')

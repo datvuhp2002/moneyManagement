@@ -1,10 +1,11 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsNumber, IsOptional } from "class-validator";
+import { IsDateString, IsNotEmpty, IsNumber, IsOptional } from "class-validator";
+import { TransactionType } from "./Transaction.enum";
   
 export class CreateTransactionDto {
     @IsNotEmpty()
     @ApiProperty()
-    transactionType: string
+    transactionType: TransactionType
     @IsNotEmpty()
     @ApiProperty()
     bill:number
@@ -26,4 +27,8 @@ export class CreateTransactionDto {
     @IsOptional()
     @ApiProperty()
     paymentImage: string
+    @IsOptional()
+    @ApiProperty()
+    @IsDateString()
+    recordDate:Date
 }

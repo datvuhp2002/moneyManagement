@@ -10,6 +10,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum transactionType {
+  Revenue
+  Expense
+  Transfer
+}
+
 // duong
 model Role {
   id        Int       @id @default(autoincrement())
@@ -27,7 +33,6 @@ model User {
   email           String            @unique
   password        String
   name            String?
-  phone           String?
   note            String?
   ownership_role  Role              @relation(fields: [role_id], references: [id])
   role_id         Int               @default(1)
@@ -43,6 +48,24 @@ model User {
   CategoriesGroup CategoriesGroup[]
   category        Category[]
   monthlyBudget   MonthlyBudget[]
+  Statistics      Statistics[]
+}
+
+model Statistics {
+  id               Int       @id @default(autoincrement())
+  year             Int?
+  month            Int?
+  day              Int?
+  expense          Int?
+  revenue          Int?
+  ownership_user   User      @relation(fields: [user_id], references: [id])
+  user_id          Int
+  ownership_wallet Wallet    @relation(fields: [wallet_id], references: [id])
+  wallet_id        Int
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime? @updatedAt
+  deletedAt        DateTime?
+  deleteMark       Boolean   @default(false)
 }
 
 //duong
@@ -53,10 +76,11 @@ model Wallet {
   createdAt      DateTime      @default(now())
   updatedAt      DateTime?     @updatedAt
   deletedAt      DateTime?
-  ownership_user User          @relation(fields: [user_id], references: [id])
-  user_id        Int
   deleteMark     Boolean       @default(false)
+  user_id        Int
+  ownership_user User          @relation(fields: [user_id], references: [id])
   Transaction    Transaction[]
+  Statistics     Statistics[]
 }
 
 // duong
@@ -64,6 +88,7 @@ model Currency {
   id            Int           @id @default(autoincrement())
   name          String
   exchange_rate Float?
+  symbol        String?
   createdAt     DateTime      @default(now())
   updatedAt     DateTime?     @updatedAt
   deletedAt     DateTime?
@@ -73,8 +98,8 @@ model Currency {
 
 model Transaction {
   id                        Int             @id @default(autoincrement())
-  recordDate                DateTime        @default(now()) @updatedAt
-  transactionType           String
+  recordDate                DateTime        @default(now())
+  transactionType           transactionType
   bill                      Int
   note                      String
   paymentImage              String?
@@ -112,11 +137,12 @@ model CategoriesGroup {
 // done
 model Category {
   id                        Int             @id @default(autoincrement())
+  name                      String
+  symbol                    String?
   ownership_user            User            @relation(fields: [user_id], references: [id])
   user_id                   Int
   ownership_categoriesGroup CategoriesGroup @relation(fields: [categoriesGroup_id], references: [id])
   categoriesGroup_id        Int
-  name                      String
   createdAt                 DateTime        @default(now())
   updatedAt                 DateTime?       @updatedAt
   deletedAt                 DateTime?
