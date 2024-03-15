@@ -31,12 +31,21 @@ export class WalletController {
   async getAllTrash(@Param() filter: WalletFilterType):Promise<WalletPaginationResponseType>{
       return await this.walletService.getAllTrash(filter)
   }
+  @Get("/getAll")
+  async getAllForUser(@Req() req: Request,@Param() filter: WalletFilterType):Promise<WalletPaginationResponseType>{
+      const userId = Number(req.user['id']);
+      return this.walletService.getAllForUser(userId, filter)
+  }
+
   @Get()
   @ApiQuery({name:"page",required:false})
   @ApiQuery({name:"items_per_page",required:false})
   @ApiQuery({name:"search",required:false})
   @ApiQuery({name:"previousPage",required:false})
   @ApiQuery({name:"nextPage",required:false})
+  
+  @Roles([Role.User])
+  @Get("/getAll")
   async getAll(@Param() filter: WalletFilterType):Promise<WalletPaginationResponseType>{
       return await this.walletService.getAll(filter)
   }
