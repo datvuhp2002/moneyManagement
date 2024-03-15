@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty } from "class-validator";
+import { IsNotEmpty, IsOptional } from "class-validator";
 
 export class CreateCurrencyDto {
     @ApiProperty()
@@ -8,6 +8,9 @@ export class CreateCurrencyDto {
     @ApiProperty()
     @IsNotEmpty()
     exchange_rate:Number;
+    @ApiProperty()
+    @IsOptional()
+    symbol:string;
 }
 export interface CurrencyFilterType {
     items_per_page?: number;

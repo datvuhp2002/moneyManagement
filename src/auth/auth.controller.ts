@@ -39,8 +39,8 @@ export class AuthController {
   @ApiBody({ type: AuthPayLoadDto })
   @Public()
   @Post('login')
-  async login(@Req() req:Request) {
-    return await this.authService.login(req.user);
+  async login(@getUser() user ) {
+    return await this.authService.login(user);
   }
   @Post('refresh_token')
   @Public()

@@ -21,6 +21,7 @@ import { TransactionModule } from './transaction/transaction.module';
 import { WalletModule } from './wallet/wallet.module';
 import { CurrencyModule } from './currency/currency.module';
 import { PrismaService } from './prisma.servcie';
+import { StatisticsModule } from './statistics/statistics.module';
 @Module({
   imports: [
     AuthModule,
@@ -40,6 +41,7 @@ import { PrismaService } from './prisma.servcie';
     TransactionModule,
     WalletModule,
     MonthlyBudgetModule,
+    StatisticsModule,
   ],
   controllers: [AppController],
   providers: [
