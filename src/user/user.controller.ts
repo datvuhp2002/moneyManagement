@@ -42,31 +42,31 @@ export class UserController {
     return this.userService.create(body);
   }
   @Get('trash')
-  @ApiQuery({name:"page",required:false})
-  @ApiQuery({name:"items_per_page",required:false})
-  @ApiQuery({name:"search",required:false})
-  @ApiQuery({name:"previousPage",required:false})
-  @ApiQuery({name:"nextPage",required:false})
+  @ApiQuery({ name: 'page', required: false })
+  @ApiQuery({ name: 'items_per_page', required: false })
+  @ApiQuery({ name: 'search', required: false })
+  @ApiQuery({ name: 'previousPage', required: false })
+  @ApiQuery({ name: 'nextPage', required: false })
   @Roles([Role.Admin])
   trash(@Query() params: UserFilterType): Promise<UserPaginationResponseType> {
     console.log('get all user api', params);
     return this.userService.trash(params);
   }
   @Get()
-  @ApiQuery({name:"page",required:false})
-  @ApiQuery({name:"items_per_page",required:false})
-  @ApiQuery({name:"search",required:false})
-  @ApiQuery({name:"previousPage",required:false})
-  @ApiQuery({name:"nextPage",required:false})
+  @ApiQuery({ name: 'page', required: false })
+  @ApiQuery({ name: 'items_per_page', required: false })
+  @ApiQuery({ name: 'search', required: false })
+  @ApiQuery({ name: 'previousPage', required: false })
+  @ApiQuery({ name: 'nextPage', required: false })
   @Roles([Role.Admin])
   getAll(@Query() params: UserFilterType): Promise<UserPaginationResponseType> {
     console.log('get all user api', params);
     return this.userService.getAll(params);
   }
   @Get('profile')
-  @Roles([Role.Admin,Role.User])
-  async getProfile(@Req() req:Request):Promise<DetailUser>{
-    const userId = Number(req.user['id'])
+  @Roles([Role.Admin, Role.User])
+  async getProfile(@Req() req: Request): Promise<DetailUser> {
+    const userId = Number(req.user['id']);
     return await this.userService.getDetail(userId);
   }
   @Get(':id')
@@ -123,12 +123,11 @@ export class UserController {
   }
   @Put()
   @Roles([Role.Admin, Role.User])
-
   updateForUser(
     @Req() req: Request,
     @Body() updateUserInformation: UpdateUserDto,
   ): Promise<User> {
-    const userId = Number(req.user['id'])
+    const userId = Number(req.user['id']);
     return this.userService.update(userId, updateUserInformation);
   }
   @Delete(':id')
@@ -139,5 +138,4 @@ export class UserController {
     console.log('delete user => ', id);
     return this.userService.deleteById(id);
   }
-
 }

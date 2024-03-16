@@ -6,10 +6,10 @@ export interface CategoryFilterType {
   previousPage?: number | null;
 }
 export interface CategoryPaginationResponseType {
-    data: { name: string; createdAt: Date }[];
-    total: number;
-    currentPage: number;
-    nextPage?: number;
-    previousPage?: number;
-    itemsPerPage?: number;
-  }
+  data: { name: string; createdAt: Date }[];
+  total: number;
+  currentPage: number;
+  nextPage?: number;
+  previousPage?: number;
+  itemsPerPage?: number;
+}

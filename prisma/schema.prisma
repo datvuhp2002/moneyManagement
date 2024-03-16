@@ -53,9 +53,7 @@ model User {
 
 model Statistics {
   id               Int       @id @default(autoincrement())
-  year             Int?
-  month            Int?
-  day              Int?
+  recordDate       DateTime  @default(now())
   expense          Int?
   revenue          Int?
   ownership_user   User      @relation(fields: [user_id], references: [id])
