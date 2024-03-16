@@ -1,8 +1,4 @@
-import {
-  IsEmail,
-  IsNotEmpty,
-  MinLength,
-} from 'class-validator';
+import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
 export class CreateUserDto {
   @IsNotEmpty()
   username: string;
@@ -28,12 +24,12 @@ export interface UserPaginationResponseType {
   previousPage?: number;
   itemsPerPage?: number;
 }
-export class DetailUser{
-  username: string
-  email:string
-  name:string
-  note:string
-  avatar:string
+export class DetailUser {
+  username: string;
+  email: string;
+  name: string;
+  note: string;
+  avatar: string;
 }
 export class UpdateUserDto {
   @IsNotEmpty()
@@ -41,7 +37,7 @@ export class UpdateUserDto {
   @IsNotEmpty()
   @IsEmail()
   email: string;
-  name?:string;
+  name?: string;
 }
 export class SoftDeleteUserDto {
   deleteMark: boolean;

@@ -1,13 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { CreateCurrencyDto, CurrencyFilterType, CurrencyPaginationResponseType } from './dto/create-currency.dto';
+import {
+  CreateCurrencyDto,
+  CurrencyFilterType,
+  CurrencyPaginationResponseType,
+} from './dto/create-currency.dto';
 import { UpdateCurrencyDto } from './dto/update-currency.dto';
 import { PrismaService } from 'src/prisma.servcie';
 import { Currency } from '@prisma/client';
 
 @Injectable()
 export class CurrencyService {
-  constructor(private prismaService: PrismaService){}
-  async getAllTrash(filters: CurrencyFilterType): Promise<CurrencyPaginationResponseType> {
+  constructor(private prismaService: PrismaService) {}
+  async getAllTrash(
+    filters: CurrencyFilterType,
+  ): Promise<CurrencyPaginationResponseType> {
     const items_per_page = Number(filters.items_per_page) || 10;
     const page = Number(filters.page) || 1;
     const search = filters.search || '';
@@ -29,7 +35,7 @@ export class CurrencyService {
           },
         ],
       },
-      
+
       orderBy: {
         createdAt: 'desc',
       },
@@ -63,10 +69,14 @@ export class CurrencyService {
     };
   }
   async create(data: CreateCurrencyDto): Promise<Currency> {
-    return await this.prismaService.currency.create({data: {...data, exchange_rate:Number(data.exchange_rate)}})    
+    return await this.prismaService.currency.create({
+      data: { ...data, exchange_rate: Number(data.exchange_rate) },
+    });
   }
 
-  async getAll(filters: CurrencyFilterType): Promise<CurrencyPaginationResponseType> {
+  async getAll(
+    filters: CurrencyFilterType,
+  ): Promise<CurrencyPaginationResponseType> {
     const items_per_page = Number(filters.items_per_page) || 10;
     const page = Number(filters.page) || 1;
     const search = filters.search || '';
@@ -86,7 +96,6 @@ export class CurrencyService {
               contains: search,
             },
           },
-
         ],
       },
       orderBy: {
@@ -101,7 +110,6 @@ export class CurrencyService {
               contains: search,
             },
           },
-
         ],
       },
     });
@@ -118,7 +126,10 @@ export class CurrencyService {
     };
   }
 
-  async getAllForUser(id: number,filters: CurrencyFilterType): Promise<CurrencyPaginationResponseType> {
+  async getAllForUser(
+    id: number,
+    filters: CurrencyFilterType,
+  ): Promise<CurrencyPaginationResponseType> {
     const items_per_page = Number(filters.items_per_page) || 10;
     const page = Number(filters.page) || 1;
     const search = filters.search || '';
@@ -128,15 +139,14 @@ export class CurrencyService {
       skip,
       where: {
         id,
-        OR:[
-            {
-                name: {
-                  contains: search,
-                },
-              },
+        OR: [
+          {
+            name: {
+              contains: search,
+            },
+          },
         ],
         AND: [
-          
           {
             deleteMark: false,
           },
@@ -146,23 +156,23 @@ export class CurrencyService {
         createdAt: 'desc',
       },
     });
-    console.log('currency = ', currency)
+    console.log('currency = ', currency);
     const total = await this.prismaService.categoriesGroup.count({
-        where: {
-            user_id: id,
-            OR:[
-                {
-                    name: {
-                      contains: search,
-                    },
-                  },
-            ],
-            AND: [
-              {
-                deleteMark: false,
-              },
-            ],
+      where: {
+        user_id: id,
+        OR: [
+          {
+            name: {
+              contains: search,
+            },
           },
+        ],
+        AND: [
+          {
+            deleteMark: false,
+          },
+        ],
+      },
     });
     const lastPage = Math.ceil(total / items_per_page);
     const nextPage = page + 1 > lastPage ? null : page + 1;
@@ -175,7 +185,7 @@ export class CurrencyService {
       currentPage: page,
       itemsPerPage: items_per_page,
     };
-}
+  }
 
   async getDetail(id: number): Promise<Currency> {
     return await this.prismaService.currency.findUnique({
@@ -188,21 +198,21 @@ export class CurrencyService {
   async update(id: number, data: UpdateCurrencyDto): Promise<Currency> {
     return await this.prismaService.currency.update({
       where: { id },
-      data: {...data,exchange_rate:Number(data.exchange_rate)},
+      data: { ...data, exchange_rate: Number(data.exchange_rate) },
     });
   }
-  async delete(id: number):Promise<Currency>{
+  async delete(id: number): Promise<Currency> {
     return await this.prismaService.currency.update({
-      where:{id, deleteMark: false},
-      data:{
+      where: { id, deleteMark: false },
+      data: {
         deleteMark: true,
-        deletedAt: new Date()
-      }
-    })
+        deletedAt: new Date(),
+      },
+    });
   }
-  async forceDelete(id: number):Promise<Currency>{
+  async forceDelete(id: number): Promise<Currency> {
     return await this.prismaService.currency.delete({
-      where:{id, deleteMark:true},
-    })
+      where: { id, deleteMark: true },
+    });
   }
 }

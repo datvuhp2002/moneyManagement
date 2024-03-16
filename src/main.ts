@@ -12,19 +12,19 @@ async function bootstrap() {
     .setVersion('1.0')
     .addTag('Auth')
     .addTag('Users')
-    .addTag("Category")
-    .addTag("Category-group")
-    .addTag("Currency")
-    .addTag("Monthly-budget")
-    .addTag("Transaction")
-    .addTag("Wallet")
-    .addTag("Role")
+    .addTag('Category')
+    .addTag('Category-group')
+    .addTag('Currency')
+    .addTag('Monthly-budget')
+    .addTag('Transaction')
+    .addTag('Wallet')
+    .addTag('Role')
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
-  app.enableCors()
-  app.useStaticAssets(join(__dirname, '../../uploads'))
+  app.enableCors();
+  app.useStaticAssets(join(__dirname, '../../uploads'));
   await app.listen(8080);
 }
 bootstrap();

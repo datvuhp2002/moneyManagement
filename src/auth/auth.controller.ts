@@ -8,7 +8,7 @@ import {
   Get,
   Req,
   SetMetadata,
-  Put
+  Put,
 } from '@nestjs/common';
 import { LoginUserDto, RegisterUserDto } from './dto/registerUserDto.dto';
 import { AuthService } from './auth.service';
@@ -18,7 +18,11 @@ import { Public } from './decorator/auth.decorator';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { Request } from 'express';
-import { AuthPayLoadDto, ChangePasswordDto, forgetPasswordDto } from './dto/auth.dto';
+import {
+  AuthPayLoadDto,
+  ChangePasswordDto,
+  forgetPasswordDto,
+} from './dto/auth.dto';
 import { getUser } from 'src/user/decorator/user.decorator';
 import { LocalAuthGuard } from './guards/local.guard';
 @ApiTags('Auth')
@@ -27,8 +31,8 @@ export class AuthController {
   constructor(private authService: AuthService) {}
   @Public()
   @Post('forgetPassword')
-  async forgetPassword(@Body() data: forgetPasswordDto ):Promise<Boolean>{
-    return await this.authService.forgetPassword(data)
+  async forgetPassword(@Body() data: forgetPasswordDto): Promise<boolean> {
+    return await this.authService.forgetPassword(data);
   }
   @Post('register')
   @Public()
@@ -39,7 +43,7 @@ export class AuthController {
   @ApiBody({ type: AuthPayLoadDto })
   @Public()
   @Post('login')
-  async login(@getUser() user ) {
+  async login(@getUser() user) {
     return await this.authService.login(user);
   }
   @Post('refresh_token')
@@ -49,7 +53,7 @@ export class AuthController {
   }
   @Public()
   @Put('changePassword')
-  async changePassword(@Body() data:ChangePasswordDto){
+  async changePassword(@Body() data: ChangePasswordDto) {
     return await this.authService.changePassword(data);
   }
 }

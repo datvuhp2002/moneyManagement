@@ -186,16 +186,16 @@ export class UserService {
         id,
         deleteMark: false,
       },
-      select:{
+      select: {
         username: true,
-        email:true,
-        name:true,
-        note:true,
-        avatar:true,
+        email: true,
+        name: true,
+        note: true,
+        avatar: true,
       },
     });
   }
- 
+
   async update(id: number, data: UpdateUserDto): Promise<User> {
     return await this.prismaService.user.update({
       where: { id },

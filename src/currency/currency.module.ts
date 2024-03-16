@@ -5,6 +5,6 @@ import { PrismaService } from 'src/prisma.servcie';
 
 @Module({
   controllers: [CurrencyController],
-  providers: [CurrencyService,PrismaService],
+  providers: [CurrencyService, PrismaService],
 })
 export class CurrencyModule {}

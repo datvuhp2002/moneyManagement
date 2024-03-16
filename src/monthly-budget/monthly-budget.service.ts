@@ -1,17 +1,30 @@
 import { Injectable } from '@nestjs/common';
-import { CreateMonthlyBudgetDto, MonthlyBudgetFilterType, MonthlyBudgetPaginationResponseType } from './dto/create-monthly-budget.dto';
+import {
+  CreateMonthlyBudgetDto,
+  MonthlyBudgetFilterType,
+  MonthlyBudgetPaginationResponseType,
+} from './dto/create-monthly-budget.dto';
 import { UpdateMonthlyBudgetDto } from './dto/update-monthly-budget.dto';
 import { PrismaService } from 'src/prisma.servcie';
 import { MonthlyBudget } from '@prisma/client';
 
 @Injectable()
 export class MonthlyBudgetService {
-  constructor(private prismaService: PrismaService){}
-  async create(userId:number,data: CreateMonthlyBudgetDto) {
-    return await this.prismaService.monthlyBudget.create({data: {...data,amount:Number(data.amount),user_id:userId,category_id:Number(data.category_id)}})
+  constructor(private prismaService: PrismaService) {}
+  async create(userId: number, data: CreateMonthlyBudgetDto) {
+    return await this.prismaService.monthlyBudget.create({
+      data: {
+        ...data,
+        amount: Number(data.amount),
+        user_id: userId,
+        category_id: Number(data.category_id),
+      },
+    });
   }
 
-  async getAll(filters: MonthlyBudgetFilterType): Promise<MonthlyBudgetPaginationResponseType> {
+  async getAll(
+    filters: MonthlyBudgetFilterType,
+  ): Promise<MonthlyBudgetPaginationResponseType> {
     const items_per_page = Number(filters.items_per_page) || 10;
     const page = Number(filters.page) || 1;
     const search = filters.search || '';
@@ -32,7 +45,6 @@ export class MonthlyBudgetService {
               contains: search,
             },
           },
-
         ],
       },
       orderBy: {
@@ -47,7 +59,6 @@ export class MonthlyBudgetService {
               contains: search,
             },
           },
-
         ],
       },
     });
@@ -64,7 +75,10 @@ export class MonthlyBudgetService {
     };
   }
 
-  async getAllForUser(id: number,filters: MonthlyBudgetFilterType): Promise<MonthlyBudgetPaginationResponseType> {
+  async getAllForUser(
+    id: number,
+    filters: MonthlyBudgetFilterType,
+  ): Promise<MonthlyBudgetPaginationResponseType> {
     const items_per_page = Number(filters.items_per_page) || 10;
     const page = Number(filters.page) || 1;
     const search = filters.search || '';
@@ -74,15 +88,14 @@ export class MonthlyBudgetService {
       skip,
       where: {
         user_id: id,
-        OR:[
-            {
-                note: {
-                  contains: search,
-                },
-              },
+        OR: [
+          {
+            note: {
+              contains: search,
+            },
+          },
         ],
         AND: [
-          
           {
             deleteMark: false,
           },
@@ -92,23 +105,23 @@ export class MonthlyBudgetService {
         createdAt: 'desc',
       },
     });
-    console.log('monthly budget = ', monthlyBudget)
+    console.log('monthly budget = ', monthlyBudget);
     const total = await this.prismaService.categoriesGroup.count({
-        where: {
-            user_id: id,
-            OR:[
-                {
-                    name: {
-                      contains: search,
-                    },
-                  },
-            ],
-            AND: [
-              {
-                deleteMark: false,
-              },
-            ],
+      where: {
+        user_id: id,
+        OR: [
+          {
+            name: {
+              contains: search,
+            },
           },
+        ],
+        AND: [
+          {
+            deleteMark: false,
+          },
+        ],
+      },
     });
     const lastPage = Math.ceil(total / items_per_page);
     const nextPage = page + 1 > lastPage ? null : page + 1;
@@ -121,34 +134,38 @@ export class MonthlyBudgetService {
       currentPage: page,
       itemsPerPage: items_per_page,
     };
-}
+  }
 
   async getDetail(id: number): Promise<MonthlyBudget> {
     return await this.prismaService.monthlyBudget.findUnique({
       where: {
         id,
       },
-    });}
-
-  async update(id: number, data: UpdateMonthlyBudgetDto): Promise<MonthlyBudget> {
-    return await this.prismaService.monthlyBudget.update({
-      where: { id },
-      data: {...data,amount:Number(data.amount)},
     });
   }
 
-  async delete(id: number):Promise<MonthlyBudget>{
+  async update(
+    id: number,
+    data: UpdateMonthlyBudgetDto,
+  ): Promise<MonthlyBudget> {
     return await this.prismaService.monthlyBudget.update({
-      where:{id},
-      data:{
-        deleteMark: true,
-        deletedAt: new Date()
-      }
-    })
+      where: { id },
+      data: { ...data, amount: Number(data.amount) },
+    });
   }
-  async forceDelete(id: number):Promise<MonthlyBudget>{
+
+  async delete(id: number): Promise<MonthlyBudget> {
+    return await this.prismaService.monthlyBudget.update({
+      where: { id },
+      data: {
+        deleteMark: true,
+        deletedAt: new Date(),
+      },
+    });
+  }
+  async forceDelete(id: number): Promise<MonthlyBudget> {
     return await this.prismaService.monthlyBudget.delete({
-      where:{id, deleteMark:true},
-    })
+      where: { id, deleteMark: true },
+    });
   }
 }
