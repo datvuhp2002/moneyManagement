@@ -16,6 +16,13 @@ export class WalletService {
       data: { ...data, user_id: id },
     });
   }
+  async createDefaultWallet(userId: number): Promise<void> {
+    const defaultWalletData = {
+      name: 'Thống kê',
+      amount: 0,
+    };
+    await this.create(userId, defaultWalletData);
+  }
   async getAllTrash(
     filters: WalletFilterType,
   ): Promise<WalletPaginationResponseType> {
