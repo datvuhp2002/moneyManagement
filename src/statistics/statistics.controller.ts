@@ -13,6 +13,9 @@ import { StatisticsService } from './statistics.service';
 import { CreateStatisticDto } from './dto/create-statistic.dto';
 import { UpdateStatisticDto } from './dto/update-statistic.dto';
 import {
+  StatisticsCalculatorByRangeFilterType,
+  StatisticsCalculatorFilterType,
+  StatisticsCalculatorPaginationResponseType,
   StatisticsFilterType,
   StatisticsPaginationResponseType,
 } from './dto/filter-type.dto';
@@ -26,37 +29,51 @@ import { getUser } from 'src/user/decorator/user.decorator';
 export class StatisticsController {
   constructor(private readonly statisticsService: StatisticsService) {}
   @Get('calculatorByMonth')
+  @ApiQuery({ name: 'page', required: false })
+  @ApiQuery({ name: 'items_per_page', required: false })
+  @ApiQuery({ name: 'previousPage', required: false })
+  @ApiQuery({ name: 'nextPage', required: false })
   @ApiQuery({ name: 'date', required: false })
+  @ApiQuery({ name: 'transaction_type', required: false })
   @Roles([Role.Admin, Role.User])
-  async calculatorByMonth(@getUser() user, @Query('date') date: string) {
+  async calculatorByMonth(@getUser() user,@Query() filters: StatisticsCalculatorFilterType):Promise<StatisticsCalculatorByRangeFilterType> {
     const userId = Number(user.id);
-    const parsedDate = date ? new Date(date) : new Date();
-    return this.statisticsService.calculatorByMonth(userId, parsedDate);
+    return this.statisticsService.calculatorByMonth(userId, filters);
   }
   @Get('calculatorByYear')
+  @ApiQuery({ name: 'page', required: false })
+  @ApiQuery({ name: 'items_per_page', required: false })
+  @ApiQuery({ name: 'previousPage', required: false })
+  @ApiQuery({ name: 'nextPage', required: false })
   @ApiQuery({ name: 'date', required: false })
+  @ApiQuery({ name: 'transaction_type', required: false })
   @Roles([Role.Admin, Role.User])
-  async calculatorByYear(@getUser() user, @Query('date') date: string) {
+  async calculatorByYear(@getUser() user,@Query() filters: StatisticsCalculatorFilterType):Promise<StatisticsCalculatorByRangeFilterType> {
     const userId = Number(user.id);
-    const parsedDate = date ? new Date(date) : new Date();
-    return this.statisticsService.calculatorByYear(userId, parsedDate);
+    return this.statisticsService.calculatorByYear(userId, filters);
   }
   @Get('calculatorByRange')
+  @ApiQuery({ name: 'page', required: false })
+  @ApiQuery({ name: 'items_per_page', required: false })
+  @ApiQuery({ name: 'previousPage', required: false })
+  @ApiQuery({ name: 'nextPage', required: false })
   @ApiQuery({ name: 'start_date', required: false })
   @ApiQuery({ name: 'end_date', required: false })
+  @ApiQuery({ name: 'transaction_type', required: false })
   @Roles([Role.Admin, Role.User])
   async calculatorByRange(
     @getUser() user,
-    @Query('start_date') startDate: string,
-    @Query('end_date') endDate: string,
-  ) {
+    @Query() filters: StatisticsCalculatorByRangeFilterType
+  ):Promise<StatisticsCalculatorPaginationResponseType> {
     const userId = Number(user.id);
-    const parsedStartDate = startDate ? new Date(startDate) : new Date();
-    const parsedEndDate = endDate ? new Date(endDate) : new Date();
+    const startDate = filters.start_date ? new Date(filters.start_date) : new Date();
+    const endDate = filters.end_date ? new Date(filters.end_date) : new Date();
+    endDate.setHours(23, 59, 59, 999);
     return this.statisticsService.calculatorByDateRange(
       userId,
-      parsedStartDate,
-      parsedEndDate,
+      filters,
+      startDate,
+      endDate,
     );
   }
   @Get('getAll')
