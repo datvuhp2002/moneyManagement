@@ -142,6 +142,7 @@ export class TransactionController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateTransactionDto: UpdateTransactionDto,
   ) {
+    const userId = Number(req.user['id']);
     if (req.fileValidationError) {
       console.log('bug');
       throw new BadRequestException(req.fileValidationError);
@@ -152,12 +153,12 @@ export class TransactionController {
     } else {
       updateTransactionDto.paymentImage = updateTransactionDto.paymentImage;
     }
-    return await this.transactionService.update(id, updateTransactionDto);
+    return await this.transactionService.update(userId,id, updateTransactionDto);
   }
-
   @Delete(':id')
-  async delete(@Param('id', ParseIntPipe) id: number) {
-    return await this.transactionService.delete(id);
+  async delete(@getUser()user,@Param('id', ParseIntPipe) id: number) {
+    const userId = Number(user.id)
+    return await this.transactionService.delete(userId,id);
   }
   @Delete('forceDelete/:id')
   async forceDelete(@Param('id', ParseIntPipe) id: number) {
