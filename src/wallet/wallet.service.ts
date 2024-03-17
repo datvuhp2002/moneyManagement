@@ -16,7 +16,6 @@ export class WalletService {
       data: { ...data, user_id: id },
     });
   }
-
   async getAllTrash(
     filters: WalletFilterType,
   ): Promise<WalletPaginationResponseType> {
@@ -74,7 +73,6 @@ export class WalletService {
       itemsPerPage: items_per_page,
     };
   }
-
   async getAll(
     filters: WalletFilterType,
   ): Promise<WalletPaginationResponseType> {
@@ -126,7 +124,6 @@ export class WalletService {
       itemsPerPage: items_per_page,
     };
   }
-
   async getAllForUser(
     id: number,
     filters: WalletFilterType,
@@ -187,7 +184,6 @@ export class WalletService {
       itemsPerPage: items_per_page,
     };
   }
-
   async getDetail(id: number): Promise<Wallet> {
     return await this.prismaService.wallet.findUnique({
       where: {
@@ -195,14 +191,20 @@ export class WalletService {
       },
     });
   }
-
   async update(id: number, data: UpdateWalletDto): Promise<Wallet> {
     return await this.prismaService.wallet.update({
       where: { id },
       data,
     });
   }
-
+  async updateAmount(id:number, amount:number):Promise<Wallet>{
+    return await this.prismaService.wallet.update({
+      where: { id },
+      data:{
+        amount
+      }
+    })
+  }
   async delete(id: number): Promise<Wallet> {
     return await this.prismaService.wallet.update({
       where: { id, deleteMark: false },

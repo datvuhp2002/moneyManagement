@@ -11,6 +11,7 @@ import {
 import { Statistics, Transaction } from '@prisma/client';
 import { StatisticsService } from 'src/statistics/statistics.service';
 import { TransactionType } from './dto/Transaction.enum';
+import { WalletService } from 'src/wallet/wallet.service';
 
 @Injectable()
 export class TransactionService {
@@ -18,6 +19,7 @@ export class TransactionService {
     private prismaService: PrismaService,
     @Inject(forwardRef(() => StatisticsService))
     private statisticsService: StatisticsService,
+    private walletService: WalletService,
   ) {}
   async create(
     userId: number,
@@ -56,11 +58,11 @@ export class TransactionService {
   private async updateStatistics(
     statistics: Statistics,
     createTransactionDto: any,
-  ): Promise<void> {
+  ): Promise<Statistics> {
     const date = createTransactionDto.recordDate
       ? new Date(createTransactionDto.recordDate)
       : new Date();
-    await this.statisticsService.update(statistics.id, {
+    const statisticsUpdateData = await this.statisticsService.update(statistics.id, {
       expense:
         createTransactionDto.transactionType === TransactionType.Chi
           ? statistics.expense + Number(createTransactionDto.bill)
@@ -72,6 +74,9 @@ export class TransactionService {
       recordDate: date,
       wallet_id: Number(createTransactionDto.wallet_id),
     });
+    const amount = statisticsUpdateData.revenue - statisticsUpdateData.expense;
+    await this.walletService.updateAmount(statisticsUpdateData.wallet_id,amount)
+    return statisticsUpdateData
   }
   private async updateValueStatistics(statistics: Statistics, transaction: Transaction, updateTransaction: UpdateTransactionDto): Promise<Statistics> {
     const oldTransactionType = transaction.transactionType;
@@ -100,6 +105,8 @@ export class TransactionService {
             revenue += Number(updateTransaction.bill);
         }
     }
+    const amount = revenue - expense;
+    await this.walletService.updateAmount(statistics.wallet_id,amount)
     return await this.statisticsService.update(statistics.id, {
         expense,
         revenue,
@@ -382,7 +389,7 @@ export class TransactionService {
         console.error(err);
         throw new HttpException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-}
+  }
   async forceDelete(id: number) {
     return await this.prismaService.transaction.delete({ where: { id } });
   }
