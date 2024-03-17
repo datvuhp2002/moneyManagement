@@ -16,13 +16,14 @@ import {
   forgetPasswordDto,
   payloadDto,
 } from './dto/auth.dto';
-import { resolve } from 'path';
+import { WalletService } from 'src/wallet/wallet.service';
 @Injectable()
 export class AuthService {
   constructor(
     private prismaService: PrismaService,
     private jwtService: JwtService,
     private configService: ConfigService,
+    private walletService: WalletService,
   ) {}
   async validateUser({ email, password }: AuthPayLoadDto): Promise<User> {
     const user = await this.prismaService.user.findUnique({
@@ -65,7 +66,6 @@ export class AuthService {
     return await this.generateToken(payload);
   };
   register = async (userData: RegisterUserDto): Promise<User> => {
-    // step 1 : checking email has already used
     const user = await this.prismaService.user.findUnique({
       where: {
         email: userData.email,
@@ -75,11 +75,16 @@ export class AuthService {
     if (user) {
       throw new BadRequestException('Email đã tồn tại');
     }
-    // step 2: hash password and store to db
     const hashPassword = await this.hashPassword(userData.password);
-    return await this.prismaService.user.create({
+    try{
+      const createdUser = await this.prismaService.user.create({
       data: { ...userData, password: hashPassword },
-    });
+      })
+      this.walletService.createDefaultWallet(createdUser.id)
+      return createdUser
+    }catch (error) {
+      throw new HttpException('Không thể tạo ra người dùng', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   };
   private async VerifyPassword(
     password: string,
