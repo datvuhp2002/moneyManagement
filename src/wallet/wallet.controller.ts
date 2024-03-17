@@ -23,6 +23,7 @@ import { Wallet } from '@prisma/client';
 import { Request } from 'express';
 import { UpdateCurrencyDto } from 'src/currency/dto/update-currency.dto';
 import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { getUser } from 'src/user/decorator/user.decorator';
 @ApiBearerAuth()
 @ApiTags('Wallet')
 @Controller('wallet')
@@ -93,9 +94,16 @@ export class WalletController {
   async forceDelete(@Param('id', ParseIntPipe) id: number): Promise<Wallet> {
     return await this.walletService.forceDelete(id);
   }
+  @Roles([Role.Admin,Role.User])
+  @Delete('/delete/:id')
+  async deleteForUser(@getUser() user,@Param('id', ParseIntPipe) id: number): Promise<Wallet> {
+    const userId = Number(user.id)
+    return await this.walletService.deleteForUser(userId,id);
+  }
   @Roles([Role.Admin])
   @Delete(':id')
   async delete(@Param('id', ParseIntPipe) id: number): Promise<Wallet> {
     return await this.walletService.delete(id);
   }
+ 
 }

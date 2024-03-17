@@ -7,6 +7,8 @@ import {
 import { UpdateWalletDto } from './dto/update-wallet.dto';
 import { PrismaService } from 'src/prisma.servcie';
 import { Wallet } from '@prisma/client';
+import { StatisticsService } from 'src/statistics/statistics.service';
+import { TransactionService } from 'src/transaction/transaction.service';
 
 @Injectable()
 export class WalletService {
@@ -18,7 +20,7 @@ export class WalletService {
   }
   async createDefaultWallet(userId: number): Promise<void> {
     const defaultWalletData = {
-      name: 'Thống kê',
+      name: 'Tổng tiền ví',
       amount: 0,
     };
     await this.create(userId, defaultWalletData);
@@ -213,6 +215,14 @@ export class WalletService {
     })
   }
   async delete(id: number): Promise<Wallet> {
+    await this.prismaService.transaction.updateMany({where: { wallet_id:id }, data:{
+      deleteMark: true, 
+      deletedAt: new Date(),
+    }})
+    await this.prismaService.statistics.updateMany({where: { wallet_id:id }, data:{
+      deleteMark: true, 
+      deletedAt: new Date(),
+    }})
     return await this.prismaService.wallet.update({
       where: { id, deleteMark: false },
       data: {
@@ -221,7 +231,26 @@ export class WalletService {
       },
     });
   }
+  async deleteForUser(userId:number,id: number): Promise<Wallet> {
+    await this.prismaService.transaction.updateMany({where: {user_id:userId, wallet_id:id }, data:{
+      deleteMark: true, 
+      deletedAt: new Date(),
+    }})
+    await this.prismaService.statistics.updateMany({where: {user_id:userId, wallet_id:id }, data:{
+      deleteMark: true, 
+      deletedAt: new Date(),
+    }})
+    return await this.prismaService.wallet.update({
+      where: { user_id:userId,id, deleteMark: false },
+      data: {
+        deleteMark: true,
+        deletedAt: new Date(),
+      },
+    });
+  }
   async forceDelete(id: number): Promise<Wallet> {
+    await this.prismaService.transaction.deleteMany({where: { wallet_id:id }})
+    await this.prismaService.statistics.deleteMany({where: {wallet_id:id }})
     return await this.prismaService.wallet.delete({
       where: { id, deleteMark: true },
     });
