@@ -1,10 +1,12 @@
-import { Delete, Injectable } from '@nestjs/common';
+import { Delete, Inject, Injectable, forwardRef } from '@nestjs/common';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { PrismaService } from 'src/prisma.servcie';
 import {
+  TransactionByRangeResponseType,
   TransactionFilterType,
   TransactionPaginationResponseType,
+  TransactionRangeFilterType,
 } from './dto/filter-type.dto';
 import { Statistics, Transaction } from '@prisma/client';
 import { StatisticsService } from 'src/statistics/statistics.service';
@@ -14,6 +16,7 @@ import { TransactionType } from './dto/Transaction.enum';
 export class TransactionService {
   constructor(
     private prismaService: PrismaService,
+    @Inject(forwardRef(() => StatisticsService))
     private statisticsService: StatisticsService,
   ) {}
   async create(
@@ -204,6 +207,39 @@ export class TransactionService {
       previousPage,
       currentPage: page,
       itemsPerPage: items_per_page,
+    };
+  }
+  async getAllByRange(
+    userId: number,
+    startDate:Date,
+    endDate:Date,
+    transaction_type:string
+  ): Promise<TransactionByRangeResponseType> {
+    endDate.setHours(23, 59, 59, 999);
+    const where:any = {
+      user_id: userId,
+      recordDate: {
+        gte: startDate,
+        lte: endDate,
+      },
+      deleteMark: false,
+    }
+    if(transaction_type){
+      const transactionsType = TransactionType[`${transaction_type}`] 
+      where.transactionType = transactionsType;
+    }
+    const Transactions = await this.prismaService.transaction.findMany({
+      where,
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+    const total = await this.prismaService.transaction.count({
+      where
+    });
+    return {
+      data: Transactions,
+      total,
     };
   }
   async getDetail(id: number) {

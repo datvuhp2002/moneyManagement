@@ -6,6 +6,6 @@ import { StatisticsService } from 'src/statistics/statistics.service';
 
 @Module({
   controllers: [TransactionController],
-  providers: [TransactionService, PrismaService, StatisticsService],
+  providers: [TransactionService, PrismaService,StatisticsService],
 })
 export class TransactionModule {}

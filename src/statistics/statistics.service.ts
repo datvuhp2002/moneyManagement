@@ -1,17 +1,25 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { CreateStatisticDto } from './dto/create-statistic.dto';
 import { UpdateStatisticDto } from './dto/update-statistic.dto';
 import { PrismaService } from 'src/prisma.servcie';
 import { Statistics } from '@prisma/client';
 import {
+  StatisticsCalculatorByRangeFilterType,
+  StatisticsCalculatorFilterType,
+  StatisticsCalculatorPaginationResponseType,
   StatisticsDateFilterType,
   StatisticsFilterType,
   StatisticsPaginationResponseType,
 } from './dto/filter-type.dto';
+import { TransactionService } from 'src/transaction/transaction.service';
+import { TransactionPaginationResponseType } from 'src/transaction/dto/filter-type.dto';
+import { TransactionType } from 'src/transaction/dto/Transaction.enum';
 
 @Injectable()
 export class StatisticsService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(private readonly prismaService: PrismaService,
+    @Inject(forwardRef(() => TransactionService))
+    private transactionService: TransactionService) {}
   async create(data: CreateStatisticDto, userId: number): Promise<Statistics> {
     return await this.prismaService.statistics.create({
       data: {
@@ -23,7 +31,6 @@ export class StatisticsService {
       },
     });
   }
-
   async findOne(userId: number, filters: Date) {
     const statistics = await this.prismaService.statistics.findFirst({
       where: {
@@ -45,7 +52,6 @@ export class StatisticsService {
     });
     return statistics;
   }
-
   async update(
     id: number,
     updateStatisticDto: UpdateStatisticDto,
@@ -62,10 +68,10 @@ export class StatisticsService {
     const page = Number(filters.page) || 1;
     const startDate = filters.start_date
       ? new Date(filters.start_date)
-      : new Date(0); // Ngày bắt đầu
-    const endDate = filters.end_date ? new Date(filters.end_date) : new Date(); // Ngày kết thúc
+      : new Date(0); 
+    const endDate = filters.end_date ? new Date(filters.end_date) : new Date(); 
+    endDate.setHours(23, 59, 59, 999);
     const skip = page > 1 ? (page - 1) * items_per_page : 0;
-
     const where = {
       deleteMark: false,
       recordDate: {
@@ -73,7 +79,6 @@ export class StatisticsService {
         lte: endDate,
       },
     };
-
     const statistics = await this.prismaService.statistics.findMany({
       take: items_per_page,
       skip,
@@ -82,13 +87,10 @@ export class StatisticsService {
          recordDate: 'asc',
       },
     });
-
     const total = await this.prismaService.statistics.count({ where });
-
     const lastPage = Math.ceil(total / items_per_page);
     const nextPage = page + 1 > lastPage ? null : page + 1;
     const previousPage = page - 1 < 1 ? null : page - 1;
-
     return {
       data: statistics,
       total,
@@ -98,7 +100,6 @@ export class StatisticsService {
       itemsPerPage: items_per_page,
     };
   }
-
   async getAllForUser(
     userId: number,
     filters: StatisticsFilterType,
@@ -107,8 +108,9 @@ export class StatisticsService {
     const page = Number(filters.page) || 1;
     const startDate = filters.start_date
       ? new Date(filters.start_date)
-      : new Date(0); // Ngày bắt đầu
-    const endDate = filters.end_date ? new Date(filters.end_date) : new Date(); // Ngày kết thúc
+      : new Date(0);
+    const endDate = filters.end_date ? new Date(filters.end_date) : new Date(); 
+    endDate.setHours(23, 59, 59, 999);
     const skip = (page - 1) * itemsPerPage;
     const where = {
         user_id:userId,
@@ -141,51 +143,29 @@ export class StatisticsService {
       itemsPerPage,
     };
   }
-  async calculatorByMonth(userId: number, date: Date) {
+  async calculatorByMonth(userId: number, filters:StatisticsCalculatorFilterType):Promise<StatisticsCalculatorPaginationResponseType> {
+    const date =filters.date ? new Date(filters.date) : new Date();
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
-    const startDate = new Date(year, month - 1, 1); // Ngày đầu tiên của tháng
-    const endDate = new Date(year, month, 0); // Ngày cuối cùng của tháng
-    const statistics = await this.prismaService.statistics.findMany({
-      where: {
-        user_id: userId,
-        deleteMark: false,
-        recordDate: {
-          gte: startDate,
-          lte: endDate,
-        },
-      },
-      orderBy: {
-        recordDate: 'asc',
-      },
-    });
-
-    const total = await this.prismaService.statistics.aggregate({
-      _sum: {
-        expense: true,
-        revenue: true,
-      },
-      where: {
-        user_id: userId,
-        deleteMark: false,
-        recordDate: {
-          gte: startDate,
-          lte: endDate,
-        },
-      },
-    });
-
-    return {
-      data: statistics,
-      total: {
-        expense: total._sum?.expense ?? 0,
-        revenue: total._sum?.revenue ?? 0,
-      },
-    };
-  }
-
-  async calculatorByDateRange(userId: number, startDate: Date, endDate: Date) {
+    const startDate = new Date(year, month - 1, 1); 
+    const endDate = new Date(year, month, 0);
     endDate.setHours(23, 59, 59, 999);
+    const statistics = await this.calculatorByDateRange(userId, filters, startDate, endDate)
+    return statistics
+  }
+  async calculatorByYear(userId: number, filters:StatisticsCalculatorFilterType ):Promise<StatisticsCalculatorPaginationResponseType> {
+    const date = filters.date ? new Date(filters.date) : new Date();
+    const year = date.getFullYear();
+    const startDate = new Date(year, 0, 1); 
+    const endDate = new Date(year + 1, 0, 1);
+    endDate.setHours(23, 59, 59, 999);
+    const statistics = await this.calculatorByDateRange(userId, filters, startDate, endDate)
+    return statistics
+  }
+  async calculatorByDateRange(userId: number, filters: StatisticsCalculatorByRangeFilterType,startDate: Date, endDate: Date):Promise<StatisticsCalculatorPaginationResponseType>{
+    const items_per_page = Number(filters.items_per_page) || 10;
+    const page = Number(filters.page) || 1;
+    const skip = page > 1 ? (page - 1) * items_per_page : 0;
     const where = {
       user_id: userId,
       deleteMark: false,
@@ -195,67 +175,37 @@ export class StatisticsService {
       },
     };
     const statistics = await this.prismaService.statistics.findMany({
+      take: items_per_page,
+      skip,
       where,
       orderBy: {
          recordDate: 'asc',
       },
     });
-    const total = await this.prismaService.statistics.aggregate({
+    const calculator = await this.prismaService.statistics.aggregate({
       _sum: {
         expense: true,
         revenue: true,
       },
       where,
     });
+    const transactions = await this.transactionService.getAllByRange(userId,startDate,endDate,filters.transaction_type)
+    const total = await this.prismaService.statistics.count({ where });
+    const lastPage = Math.ceil(total / items_per_page);
+    const nextPage = page + 1 > lastPage ? null : page + 1;
+    const previousPage = page - 1 < 1 ? null : page - 1;
     return {
       data: statistics,
-      total: {
-        expense: total._sum?.expense ?? 0,
-        revenue: total._sum?.revenue ?? 0,
-      },
+      transaction: transactions,
+      expense: calculator._sum?.expense ?? 0,
+      revenue: calculator._sum?.revenue ?? 0,
+      total,
+      nextPage,
+      previousPage,
+      currentPage: page,
+      itemsPerPage: items_per_page,
     };
   }
-
-  async calculatorByYear(userId: number, date: Date) {
-    const year = date.getFullYear();
-    const statistics = await this.prismaService.statistics.findMany({
-      where: {
-        user_id: userId,
-        deleteMark: false,
-        recordDate: {
-          gte: new Date(year, 0, 1), // Ngày bắt đầu của năm
-          lt: new Date(year + 1, 0, 1), // Ngày kết thúc của năm
-        },
-      },
-      orderBy: {
-         recordDate: 'asc',
-      },
-    });
-
-    const total = await this.prismaService.statistics.aggregate({
-      _sum: {
-        expense: true,
-        revenue: true,
-      },
-      where: {
-        user_id: userId,
-        deleteMark: false,
-        recordDate: {
-          gte: new Date(year, 0, 1), // Ngày bắt đầu của năm
-          lt: new Date(year + 1, 0, 1), // Ngày kết thúc của năm
-        },
-      },
-    });
-
-    return {
-      data: statistics,
-      total: {
-        expense: total._sum?.expense ?? 0,
-        revenue: total._sum?.revenue ?? 0,
-      },
-    };
-  }
-
   async remove(id: number) {
     return `This action removes a #${id} statistic`;
   }
