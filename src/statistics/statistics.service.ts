@@ -14,14 +14,16 @@ import {
 import { TransactionService } from 'src/transaction/transaction.service';
 import { TransactionPaginationResponseType } from 'src/transaction/dto/filter-type.dto';
 import { TransactionType } from 'src/transaction/dto/Transaction.enum';
+import { WalletService } from 'src/wallet/wallet.service';
 
 @Injectable()
 export class StatisticsService {
   constructor(private readonly prismaService: PrismaService,
     @Inject(forwardRef(() => TransactionService))
-    private transactionService: TransactionService) {}
+    private transactionService: TransactionService,
+    private walletService: WalletService) {}
   async create(data: CreateStatisticDto, userId: number): Promise<Statistics> {
-    return await this.prismaService.statistics.create({
+    const stasitics = await this.prismaService.statistics.create({
       data: {
         ...data,
         revenue: Number(data.revenue),
@@ -30,6 +32,9 @@ export class StatisticsService {
         wallet_id: Number(data.wallet_id),
       },
     });
+    const amount = stasitics.revenue - stasitics.expense;
+    await this.walletService.updateAmount(stasitics.wallet_id,amount)
+    return stasitics
   }
   async findOne(userId: number, filters: Date) {
     const statistics = await this.prismaService.statistics.findFirst({
@@ -56,10 +61,13 @@ export class StatisticsService {
     id: number,
     updateStatisticDto: UpdateStatisticDto,
   ): Promise<Statistics> {
-    return await this.prismaService.statistics.update({
+    const stasitics = await this.prismaService.statistics.update({
       where: { id },
       data: { ...updateStatisticDto },
     });
+    const amount = stasitics.revenue - stasitics.expense;
+    await this.walletService.updateAmount(stasitics.wallet_id,amount)
+    return stasitics
   }
   async getAll(
     filters: StatisticsFilterType,
