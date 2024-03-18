@@ -6,11 +6,12 @@ import { Wallet } from '@prisma/client';
 
 @Injectable()
 export class WalletService {
+  prisma: any;
   constructor(private prismaService: PrismaService){}
   async create(id: number, data: CreateWalletDto): Promise<Wallet> {
-    return await this.prismaService.wallet.create({data: {...data, user_id:id}})    
+    return await this.prismaService.wallet.create({data: { user_id:id, ...data}})    
   }
-
+  
   async getAllTrash(filters: WalletFilterType): Promise<WalletPaginationResponseType> {
     const items_per_page = Number(filters.items_per_page) || 10;
     const page = Number(filters.page) || 1;
@@ -38,7 +39,7 @@ export class WalletService {
         createdAt: 'desc',
       },
     });
-    const total = await this.prismaService.categoriesGroup.count({
+    const total = await this.prismaService.wallet.count({
       where: {
         OR: [
           {

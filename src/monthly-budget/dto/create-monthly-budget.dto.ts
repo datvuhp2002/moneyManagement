@@ -2,8 +2,8 @@ import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty } from "class-validator";
 
 export class CreateMonthlyBudgetDto {
-    @IsNotEmpty()
     @ApiProperty()
+    @IsNotEmpty()
     amount:number;
     @IsNotEmpty()
     @ApiProperty()
