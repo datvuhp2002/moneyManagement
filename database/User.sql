@@ -29,10 +29,10 @@
 --   CONSTRAINT `User_role_id_fkey` FOREIGN KEY (`role_id`) REFERENCES `Role` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
 -- ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `User` (`id`, `username`, `email`, `password`, `name`, `phone`, `note`, `role_id`, `avatar`, `refresh_token`, `status`, `createdAt`, `updatedAt`, `deletedAt`, `deleteMark`) VALUES
-(1, 'admin', 'admin@gmail.com', '$2b$10$wbWQ9RqidfeA8rMF8jVw7OdDYlpM0xSjxUPsxnfxxUwrEvvqPSqRG', NULL, NULL, NULL, 2, NULL, NULL, 1, '2024-03-04 15:34:38.446', '2024-03-04 15:34:38.446', NULL, 0);
-INSERT INTO `User` (`id`, `username`, `email`, `password`, `name`, `phone`, `note`, `role_id`, `avatar`, `refresh_token`, `status`, `createdAt`, `updatedAt`, `deletedAt`, `deleteMark`) VALUES
-(2, 'user', 'user@gmail.com', '$2b$10$yPbr0FYJYKt7UElSBg/TaePmzUAU.vdHcGAG8oyYGLFEyShGHp3xu', NULL, NULL, NULL, 1, NULL, NULL, 1, '2024-03-04 15:34:48.331', '2024-03-04 15:34:48.331', NULL, 0);
+INSERT INTO `User` (`id`, `username`, `email`, `password`, `name`, `note`, `role_id`, `avatar`, `refresh_token`, `status`, `createdAt`, `updatedAt`, `deletedAt`, `deleteMark`) VALUES
+(1, 'admin', 'admin@gmail.com', '$2b$10$wbWQ9RqidfeA8rMF8jVw7OdDYlpM0xSjxUPsxnfxxUwrEvvqPSqRG', NULL, NULL, 2, NULL, NULL, 1, '2024-03-04 15:34:38.446', '2024-03-04 15:34:38.446', NULL, 0);
+INSERT INTO `User` (`id`, `username`, `email`, `password`, `name`, `note`, `role_id`, `avatar`, `refresh_token`, `status`, `createdAt`, `updatedAt`, `deletedAt`, `deleteMark`) VALUES
+(2, 'user', 'user@gmail.com', '$2b$10$yPbr0FYJYKt7UElSBg/TaePmzUAU.vdHcGAG8oyYGLFEyShGHp3xu', NULL, NULL, 1, NULL, NULL, 1, '2024-03-04 15:34:48.331', '2024-03-04 15:34:48.331', NULL, 0);
 
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

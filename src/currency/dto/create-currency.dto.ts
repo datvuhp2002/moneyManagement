@@ -1,27 +1,29 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty } from "class-validator";
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateCurrencyDto {
-    @ApiProperty()
-    @IsNotEmpty()
-    name:string;
-    @ApiProperty()
-    @IsNotEmpty()
-    exchange_rate:Number;
-    
+  @ApiProperty()
+  @IsNotEmpty()
+  name: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  exchange_rate: number;
+  @ApiProperty()
+  @IsOptional()
+  symbol: string;
 }
 export interface CurrencyFilterType {
-    items_per_page?: number;
-    page?: number;
-    search?: string;
-    nextPage?: number;
-    previousPage?: number;
-  }
+  items_per_page?: number;
+  page?: number;
+  search?: string;
+  nextPage?: number;
+  previousPage?: number;
+}
 export interface CurrencyPaginationResponseType {
-    data: { name: string; createdAt: Date }[];
-    total: number;
-    currentPage: number;
-    nextPage?: number;
-    previousPage?: number;
-    itemsPerPage?: number;
+  data: { name: string; createdAt: Date }[];
+  total: number;
+  currentPage: number;
+  nextPage?: number;
+  previousPage?: number;
+  itemsPerPage?: number;
 }

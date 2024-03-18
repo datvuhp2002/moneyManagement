@@ -1,18 +1,33 @@
 import { Injectable } from '@nestjs/common';
-import { CreateWalletDto, WalletFilterType, WalletPaginationResponseType } from './dto/create-wallet.dto';
+import {
+  CreateWalletDto,
+  WalletFilterType,
+  WalletPaginationResponseType,
+} from './dto/create-wallet.dto';
 import { UpdateWalletDto } from './dto/update-wallet.dto';
 import { PrismaService } from 'src/prisma.servcie';
 import { Wallet } from '@prisma/client';
+import { StatisticsService } from 'src/statistics/statistics.service';
+import { TransactionService } from 'src/transaction/transaction.service';
 
 @Injectable()
 export class WalletService {
-  prisma: any;
-  constructor(private prismaService: PrismaService){}
+  constructor(private prismaService: PrismaService) {}
   async create(id: number, data: CreateWalletDto): Promise<Wallet> {
-    return await this.prismaService.wallet.create({data: { user_id:id, ...data}})    
+    return await this.prismaService.wallet.create({
+      data: { ...data, user_id: id },
+    });
   }
-  
-  async getAllTrash(filters: WalletFilterType): Promise<WalletPaginationResponseType> {
+  async createDefaultWallet(userId: number): Promise<void> {
+    const defaultWalletData = {
+      name: 'Tổng tiền ví',
+      amount: 0,
+    };
+    await this.create(userId, defaultWalletData);
+  }
+  async getAllTrash(
+    filters: WalletFilterType,
+  ): Promise<WalletPaginationResponseType> {
     const items_per_page = Number(filters.items_per_page) || 10;
     const page = Number(filters.page) || 1;
     const search = filters.search || '';
@@ -34,7 +49,7 @@ export class WalletService {
           },
         ],
       },
-      
+
       orderBy: {
         createdAt: 'desc',
       },
@@ -67,8 +82,9 @@ export class WalletService {
       itemsPerPage: items_per_page,
     };
   }
-
-  async getAll(filters: WalletFilterType): Promise<WalletPaginationResponseType> {
+  async getAll(
+    filters: WalletFilterType,
+  ): Promise<WalletPaginationResponseType> {
     const items_per_page = Number(filters.items_per_page) || 10;
     const page = Number(filters.page) || 1;
     const search = filters.search || '';
@@ -88,7 +104,6 @@ export class WalletService {
               contains: search,
             },
           },
-
         ],
       },
       orderBy: {
@@ -103,7 +118,6 @@ export class WalletService {
               contains: search,
             },
           },
-
         ],
       },
     });
@@ -119,8 +133,10 @@ export class WalletService {
       itemsPerPage: items_per_page,
     };
   }
-
-  async getAllForUser(id: number,filters: WalletFilterType): Promise<WalletPaginationResponseType> {
+  async getAllForUser(
+    id: number,
+    filters: WalletFilterType,
+  ): Promise<WalletPaginationResponseType> {
     const items_per_page = Number(filters.items_per_page) || 10;
     const page = Number(filters.page) || 1;
     const search = filters.search || '';
@@ -130,15 +146,14 @@ export class WalletService {
       skip,
       where: {
         user_id: id,
-        OR:[
-            {
-                name: {
-                  contains: search,
-                },
-              },
+        OR: [
+          {
+            name: {
+              contains: search,
+            },
+          },
         ],
         AND: [
-          
           {
             deleteMark: false,
           },
@@ -148,23 +163,23 @@ export class WalletService {
         createdAt: 'desc',
       },
     });
-    console.log('wallet = ', wallet)
+    console.log('wallet = ', wallet);
     const total = await this.prismaService.categoriesGroup.count({
-        where: {
-            user_id: id,
-            OR:[
-                {
-                    name: {
-                      contains: search,
-                    },
-                  },
-            ],
-            AND: [
-              {
-                deleteMark: false,
-              },
-            ],
+      where: {
+        user_id: id,
+        OR: [
+          {
+            name: {
+              contains: search,
+            },
           },
+        ],
+        AND: [
+          {
+            deleteMark: false,
+          },
+        ],
+      },
     });
     const lastPage = Math.ceil(total / items_per_page);
     const nextPage = page + 1 > lastPage ? null : page + 1;
@@ -177,10 +192,7 @@ export class WalletService {
       currentPage: page,
       itemsPerPage: items_per_page,
     };
-}
-
-
-
+  }
   async getDetail(id: number): Promise<Wallet> {
     return await this.prismaService.wallet.findUnique({
       where: {
@@ -188,26 +200,59 @@ export class WalletService {
       },
     });
   }
-
   async update(id: number, data: UpdateWalletDto): Promise<Wallet> {
     return await this.prismaService.wallet.update({
       where: { id },
       data,
     });
   }
-
-  async delete(id: number):Promise<Wallet>{
+  async updateAmount(id:number, amount:number):Promise<Wallet>{
     return await this.prismaService.wallet.update({
-      where:{id, deleteMark: false},
+      where: { id },
       data:{
-        deleteMark: true,
-        deletedAt: new Date()
+        amount
       }
     })
   }
-  async forceDelete(id: number):Promise<Wallet>{
+  async delete(id: number): Promise<Wallet> {
+    await this.prismaService.transaction.updateMany({where: { wallet_id:id }, data:{
+      deleteMark: true, 
+      deletedAt: new Date(),
+    }})
+    await this.prismaService.statistics.updateMany({where: { wallet_id:id }, data:{
+      deleteMark: true, 
+      deletedAt: new Date(),
+    }})
+    return await this.prismaService.wallet.update({
+      where: { id, deleteMark: false },
+      data: {
+        deleteMark: true,
+        deletedAt: new Date(),
+      },
+    });
+  }
+  async deleteForUser(userId:number,id: number): Promise<Wallet> {
+    await this.prismaService.transaction.updateMany({where: {user_id:userId, wallet_id:id }, data:{
+      deleteMark: true, 
+      deletedAt: new Date(),
+    }})
+    await this.prismaService.statistics.updateMany({where: {user_id:userId, wallet_id:id }, data:{
+      deleteMark: true, 
+      deletedAt: new Date(),
+    }})
+    return await this.prismaService.wallet.update({
+      where: { user_id:userId,id, deleteMark: false },
+      data: {
+        deleteMark: true,
+        deletedAt: new Date(),
+      },
+    });
+  }
+  async forceDelete(id: number): Promise<Wallet> {
+    await this.prismaService.transaction.deleteMany({where: { wallet_id:id }})
+    await this.prismaService.statistics.deleteMany({where: {wallet_id:id }})
     return await this.prismaService.wallet.delete({
-      where:{id, deleteMark:true},
-    })
+      where: { id, deleteMark: true },
+    });
   }
 }

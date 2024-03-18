@@ -1,9 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsEmail,
-  IsNotEmpty,
-  MinLength,
-} from 'class-validator';
+import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
 export class CreateUserDto {
   @ApiProperty()
   @IsNotEmpty()
@@ -30,13 +26,12 @@ export interface UserPaginationResponseType {
   previousPage?: number;
   itemsPerPage?: number;
 }
-export class DetailUser{
-  username: string
-  email:string
-  name:string
-  phone:string
-  note:string
-  avatar:string
+export class DetailUser {
+  username: string;
+  email: string;
+  name: string;
+  note: string;
+  avatar: string;
 }
 export class UpdateUserDto {
   @IsNotEmpty()
@@ -44,8 +39,7 @@ export class UpdateUserDto {
   @IsNotEmpty()
   @IsEmail()
   email: string;
-  phone?:string;
-  name?:string;
+  name?: string;
 }
 export class SoftDeleteUserDto {
   deleteMark: boolean;

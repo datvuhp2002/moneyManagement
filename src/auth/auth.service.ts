@@ -1,23 +1,34 @@
-import { BadRequestException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { User } from '@prisma/client';
 import { PrismaService } from 'src/prisma.servcie';
 import { RegisterUserDto } from './dto/registerUserDto.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
-import { AuthPayLoadDto, ChangePasswordDto, forgetPasswordDto, payloadDto } from './dto/auth.dto';
-import { resolve } from 'path';
+import {
+  AuthPayLoadDto,
+  ChangePasswordDto,
+  forgetPasswordDto,
+  payloadDto,
+} from './dto/auth.dto';
+import { WalletService } from 'src/wallet/wallet.service';
 @Injectable()
 export class AuthService {
   constructor(
     private prismaService: PrismaService,
     private jwtService: JwtService,
     private configService: ConfigService,
+    private walletService: WalletService,
   ) {}
   async validateUser({ email, password }: AuthPayLoadDto): Promise<User> {
     const user = await this.prismaService.user.findUnique({
       where: {
-        email
+        email,
       },
       include: {
         ownership_role: {
@@ -27,27 +38,34 @@ export class AuthService {
         },
       },
     });
-    if(!user){
-      throw new HttpException({message: "Account is not exist"},HttpStatus.UNAUTHORIZED)
-  }
+    console.log(user);
+    if (!user) {
+      throw new HttpException(
+        { message: 'Account is not exist' },
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
     const verify = await this.VerifyPassword(password, user.password);
-    if (!verify){
-      throw new HttpException({message: "Password does not correct"},HttpStatus.UNAUTHORIZED);
+    if (!verify) {
+      throw new HttpException(
+        { message: 'Password does not correct' },
+        HttpStatus.UNAUTHORIZED,
+      );
       return null;
     }
     return user;
   }
-  
-   login = async (user: any): Promise<{ access_token: string; refresh_token: string }>=> {
+  login = async (
+    user: any,
+  ): Promise<{ access_token: string; refresh_token: string }> => {
     const payload = {
       id: user.id,
       email: user.email,
-      roleName: user.ownership_role.name
+      roleName: user.ownership_role.name,
     };
     return await this.generateToken(payload);
   };
   register = async (userData: RegisterUserDto): Promise<User> => {
-    // step 1 : checking email has already used
     const user = await this.prismaService.user.findUnique({
       where: {
         email: userData.email,
@@ -55,13 +73,18 @@ export class AuthService {
       },
     });
     if (user) {
-      throw new BadRequestException('Email đã tồn tại')
+      throw new BadRequestException('Email đã tồn tại');
     }
-    // step 2: hash password and store to db
     const hashPassword = await this.hashPassword(userData.password);
-    return await this.prismaService.user.create({
+    try{
+      const createdUser = await this.prismaService.user.create({
       data: { ...userData, password: hashPassword },
-    });
+      })
+      this.walletService.createDefaultWallet(createdUser.id)
+      return createdUser
+    }catch (error) {
+      throw new HttpException('Không thể tạo ra người dùng', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   };
   private async VerifyPassword(
     password: string,
@@ -99,7 +122,11 @@ export class AuthService {
         where: { id: verify.id, refresh_token },
       });
       if (checkExist) {
-        return this.generateToken({id: verify.id, email: verify.email,roleName: verify.roleName});
+        return this.generateToken({
+          id: verify.id,
+          email: verify.email,
+          roleName: verify.roleName,
+        });
       } else {
         throw new HttpException(
           'refresh token is not valid',
@@ -113,27 +140,28 @@ export class AuthService {
       );
     }
   }
-  async forgetPassword(data: forgetPasswordDto): Promise<Boolean> {
+  async forgetPassword(data: forgetPasswordDto): Promise<boolean> {
     const user = await this.prismaService.user.findUnique({
       where: {
-        email:data.email,
+        email: data.email,
         deleteMark: false,
       },
     });
-    if(!user){
-      throw new BadRequestException('Email không tồn tại')
-    };
-    return true
+    if (!user) {
+      throw new BadRequestException('Email không tồn tại');
+    }
+    return true;
   }
-  async changePassword(data: ChangePasswordDto): Promise<any>{
+  async changePassword(data: ChangePasswordDto): Promise<any> {
     const hashPassword = await this.hashPassword(data.password);
     return await this.prismaService.user.update({
       where: {
-        email:data.email,
+        email: data.email,
         deleteMark: false,
-      },data:{
-        password:hashPassword
-      }
+      },
+      data: {
+        password: hashPassword,
+      },
     });
   }
 }

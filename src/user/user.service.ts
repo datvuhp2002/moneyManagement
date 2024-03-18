@@ -16,11 +16,11 @@ import {
   UserPaginationResponseType,
 } from './dto/user.dto';
 import { hash } from 'bcrypt';
+import { WalletService } from 'src/wallet/wallet.service';
 @Injectable()
 export class UserService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(private prismaService: PrismaService,private walletService: WalletService) {}
   async create(body: CreateUserDto): Promise<User> {
-    // step 1: checking email has already exist
     const user = await this.prismaService.user.findUnique({
       where: {
         email: body.email,
@@ -33,11 +33,11 @@ export class UserService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    // step 2: hash password and store to db
     const hashPassword = await hash(body.password, 10);
     const result = await this.prismaService.user.create({
       data: { ...body, password: hashPassword },
     });
+    this.walletService.createDefaultWallet(result.id)
     return result;
   }
   async trash(filters: UserFilterType): Promise<UserPaginationResponseType> {
@@ -181,22 +181,20 @@ export class UserService {
     };
   }
   async getDetail(id: number): Promise<DetailUser> {
-    return this.prismaService.user.findUnique({
+    return await this.prismaService.user.findUnique({
       where: {
         id,
         deleteMark: false,
       },
-      select:{
+      select: {
         username: true,
-        email:true,
-        name:true,
-        phone:true,
-        note:true,
-        avatar:true,
+        email: true,
+        name: true,
+        note: true,
+        avatar: true,
       },
     });
   }
- 
   async update(id: number, data: UpdateUserDto): Promise<User> {
     return await this.prismaService.user.update({
       where: { id },
