@@ -8,10 +8,12 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
   Req,
 } from '@nestjs/common';
 import { CategoryGroupService } from './category-group.service';
 import {
+  // CategoryGroupCalculatorByRangeFilterType,
   CategoryGroupFilterType,
   CategoryGroupPaginationResponseType,
   CreateCategoryGroupDto,
@@ -22,6 +24,7 @@ import { Request } from 'express';
 import { Roles } from 'src/auth/decorator/roles.decorator';
 import { Role } from 'src/auth/dto/Role.enum';
 import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { getUser } from 'src/user/decorator/user.decorator';
 @ApiBearerAuth()
 @ApiTags('Category-group')
 @Controller('category-group')

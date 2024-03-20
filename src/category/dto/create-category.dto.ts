@@ -10,4 +10,7 @@ export class CreateCategoryDto {
   name: string;
   @IsOptional()
   symbol: string;
+  @IsNotEmpty()
+  @ApiProperty()
+  user_id: number;
 }
