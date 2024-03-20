@@ -32,7 +32,7 @@ export class CategoryGroupController {
     const userId = Number(req.user['id']);
     return await this.categoryGroupService.create(userId, data);
   }
-  @Roles([Role.User])
+  @Roles([Role.User,Role.Admin])
   @Get('/getAll')
   @ApiQuery({ name: 'page', required: false })
   @ApiQuery({ name: 'items_per_page', required: false })

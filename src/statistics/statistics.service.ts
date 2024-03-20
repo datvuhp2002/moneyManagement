@@ -197,7 +197,7 @@ export class StatisticsService {
       },
       where,
     });
-    const transactions = await this.transactionService.getAllByRange(userId,startDate,endDate,filters.transaction_type)
+    const transactions = await this.transactionService.getAllByRange(userId,startDate,endDate,filters.transaction_type,filters.search)
     const total = await this.prismaService.statistics.count({ where });
     const lastPage = Math.ceil(total / items_per_page);
     const nextPage = page + 1 > lastPage ? null : page + 1;
