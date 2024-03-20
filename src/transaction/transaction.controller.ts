@@ -111,8 +111,15 @@ export class TransactionController {
     return await this.transactionService.getAllForUser(userId, filter);
   }
   @Get(':id')
+  @Roles([ Role.Admin])
   getDetail(@Param('id', ParseIntPipe) id: number) {
     return this.transactionService.getDetail(id);
+  }
+  @Get('detail/:id')
+  @Roles([ Role.Admin, Role.User])
+  getDetailForUser(@getUser() user,@Param('id', ParseIntPipe) id: number) {
+    const userId = Number(user.id)
+    return this.transactionService.getDetailForUser(userId,id);
   }
   @Put(':id')
   @UseInterceptors(

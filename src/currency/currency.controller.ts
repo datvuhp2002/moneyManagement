@@ -46,6 +46,7 @@ export class CurrencyController {
     return await this.currencyService.getAllTrash(filter);
   }
   @Get()
+  @Roles([Role.Admin])
   @ApiQuery({ name: 'page', required: false })
   @ApiQuery({ name: 'items_per_page', required: false })
   @ApiQuery({ name: 'search', required: false })
@@ -56,7 +57,7 @@ export class CurrencyController {
   ): Promise<CurrencyPaginationResponseType> {
     return await this.currencyService.getAll(filter);
   }
-  @Roles([Role.User])
+  @Roles([Role.User,Role.Admin])
   @Get('/getAll')
   async getAllForUser(
     @Req() req: Request,
@@ -65,6 +66,7 @@ export class CurrencyController {
     const userId = Number(req.user['id']);
     return this.currencyService.getAllForUser(userId, filter);
   }
+  @Roles([Role.Admin])
   @Public()
   @Get(':id')
   async getDetail(@Param('id', ParseIntPipe) id: number): Promise<Currency> {
