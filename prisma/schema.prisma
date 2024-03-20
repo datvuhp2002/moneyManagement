@@ -13,7 +13,6 @@ datasource db {
 enum transactionType {
   Revenue
   Expense
-  Transfer
 }
 
 // duong

@@ -112,8 +112,4 @@ export class StatisticsController {
   ) {
     return this.statisticsService.update(+id, updateStatisticDto);
   }
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.statisticsService.remove(+id);
-  }
 }
