@@ -35,6 +35,7 @@ export interface StatisticsCalculatorByRangeFilterType {
   previousPage?: number;
   start_date?: Date;
   end_date?: Date;
+  search?:string
   transaction_type?: TransactionType;
 }
 export interface StatisticsCalculatorPaginationResponseType {

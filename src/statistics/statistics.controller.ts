@@ -104,7 +104,6 @@ export class StatisticsController {
   ): Promise<StatisticsPaginationResponseType> {
     return this.statisticsService.getAll(filter);
   }
-
   @Patch(':id')
   update(
     @Param('id') id: string,

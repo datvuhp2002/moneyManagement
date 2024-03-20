@@ -317,8 +317,10 @@ export class TransactionService {
     userId: number,
     startDate:Date,
     endDate:Date,
+    search:string,
     transaction_type:string
   ): Promise<TransactionByRangeResponseType> {
+    const searchKeyWord = search || '';
     endDate.setHours(23, 59, 59, 999);
     const where:any = {
       user_id: userId,
@@ -327,6 +329,13 @@ export class TransactionService {
         lte: endDate,
       },
       deleteMark: false,
+      OR: [
+        {
+          note: {
+            contains: searchKeyWord,
+          },
+        },
+      ],
     }
     if(transaction_type){
       const transactionsType = TransactionType[`${transaction_type}`] 
@@ -349,6 +358,76 @@ export class TransactionService {
   async getDetail(id: number):Promise<Transaction> {
     return await this.prismaService.transaction.findUnique({ where: { id,deleteMark:false } });
   }
+  async getDetailForUser(userId: number, id: number): Promise<any> {
+    return await this.prismaService.transaction.findUnique({
+      where: { user_id: userId, id, deleteMark: false },
+      select: {
+        id: true,
+        recordDate: true,
+        transactionType: true,
+        bill: true,
+        note: true,
+        paymentImage: true,
+        createdAt: true,
+        updatedAt: true,
+        user_id: true,
+        wallet_id: true,
+        category_id: true,
+        currency_id: true,
+        categoriesGroup_id: true,
+        ownership_wallet: {
+          select: {
+            id: true,
+            name: true,
+            amount: true,
+            createdAt: true,
+            updatedAt: true,
+            deletedAt: false, // Loại bỏ deletedAt
+            deleteMark: false, // Loại bỏ deleteMark
+            user_id: true,
+          },
+        },
+        ownership_categoriesGroup: {
+          select: {
+            id: true,
+            user_id: true,
+            name: true,
+            note: true,
+            createdAt: true,
+            updatedAt: true,
+            deletedAt: false, // Loại bỏ deletedAt
+            deleteMark: false, // Loại bỏ deleteMark
+          },
+        },
+        ownership_category: {
+          select: {
+            id: true,
+            name: true,
+            symbol: true,
+            user_id: true,
+            categoriesGroup_id: true,
+            createdAt: true,
+            updatedAt: true,
+            deletedAt: false, // Loại bỏ deletedAt
+            deleteMark: false, // Loại bỏ deleteMark
+          },
+        },
+        ownership_currency: {
+          select: {
+            id: true,
+            name: true,
+            exchange_rate: true,
+            symbol: true,
+            createdAt: true,
+            updatedAt: true,
+            deletedAt: false, // Loại bỏ deletedAt
+            deleteMark: false, // Loại bỏ deleteMark
+          },
+        },
+      },
+    });
+  }
+  
   async trash(
     filters: TransactionFilterType,
   ): Promise<TransactionPaginationResponseType> {
