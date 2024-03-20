@@ -12,6 +12,7 @@ import { Statistics, Transaction } from '@prisma/client';
 import { StatisticsService } from 'src/statistics/statistics.service';
 import { TransactionType } from './dto/Transaction.enum';
 import { WalletService } from 'src/wallet/wallet.service';
+import { UploadPaymentImageDto } from './dto/upload-paymentImage.dto';
 
 @Injectable()
 export class TransactionService {
@@ -316,6 +317,12 @@ export class TransactionService {
   async getDetail(id: number):Promise<Transaction> {
     return await this.prismaService.transaction.findUnique({ where: { id,deleteMark:false } });
   }
+  async uploadPaymentImage(id: number, paymentImage: string): Promise<UploadPaymentImageDto> {
+    return await this.prismaService.transaction.update({
+      where: { id },
+      data: { paymentImage },
+    });
+  }
   async getDetailForUser(userId: number, id: number): Promise<any> {
     return await this.prismaService.transaction.findUnique({
       where: { user_id: userId, id, deleteMark: false },
@@ -339,7 +346,7 @@ export class TransactionService {
             name: true,
             amount: true,
             createdAt: true,
-            updatedAt: true,
+            updatedAt: true, 
             deletedAt: false, // Loại bỏ deletedAt
             deleteMark: false, // Loại bỏ deleteMark
             user_id: true,
