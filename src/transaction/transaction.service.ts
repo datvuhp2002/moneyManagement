@@ -8,7 +8,7 @@ import {
   TransactionPaginationResponseType,
   TransactionRangeFilterType,
 } from './dto/filter-type.dto';
-import { Statistics, Transaction } from '@prisma/client';
+import { Statistics, Transaction, transactionType } from '@prisma/client';
 import { StatisticsService } from 'src/statistics/statistics.service';
 import { TransactionType } from './dto/Transaction.enum';
 import { WalletService } from 'src/wallet/wallet.service';
@@ -157,6 +157,32 @@ export class TransactionService {
       userId,
     );
   }
+  // private async createStatistics(
+  //   userId: number,
+  //   date: Date,
+  //   createTransactionDto: CreateTransactionDto,
+  // ): Promise<void> {
+  //   let expense = 0;
+  //   let revenue = 0;
+  //   createTransactionDto.transactionType.forEach(type => {
+  //       if (type === TransactionType.Chi) {
+  //           expense += Number(createTransactionDto.bill);
+  //       } else if (type === TransactionType.Thu) {
+  //           revenue += Number(createTransactionDto.bill);
+  //       }
+  //   });
+
+  //   await this.statisticsService.create(
+  //     {
+  //       expense: expense,
+  //       revenue: revenue,
+  //       recordDate: date,
+  //       wallet_id: Number(createTransactionDto.wallet_id),
+  //     },
+  //     userId,
+  //   );
+  // }
+
   async getAll(
     filters: TransactionFilterType,
   ): Promise<TransactionPaginationResponseType> {
@@ -272,6 +298,22 @@ export class TransactionService {
       itemsPerPage: items_per_page,
     };
   }
+
+  // async createDefaultTransactionType(userId: number): Promise<void> {
+  //   const defaultTranstionType = {
+  //     transactionType: [TransactionType.Chi, TransactionType.Thu],
+  //     bill: 0,
+  //     note: null,
+  //     currency_id: 0,
+  //     categoriesGroup_id: 0,
+  //     category_id: 0,
+  //     wallet_id: 0,
+  //     paymentImage: null,
+  //     recordDate: new Date(),
+  //   }
+  //   await this.create(userId, defaultTranstionType);
+  // }
+
   async getAllByRange(
     userId: number,
     startDate:Date,

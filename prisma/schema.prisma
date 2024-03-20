@@ -13,7 +13,6 @@ datasource db {
 enum transactionType {
   Revenue
   Expense
-  Transfer
 }
 
 // duong
@@ -37,6 +36,8 @@ model User {
   ownership_role  Role              @relation(fields: [role_id], references: [id])
   role_id         Int               @default(1)
   avatar          String?
+  // collect         Int               @default(0)
+  // spend           Int               @default(0)
   refresh_token   String?           @db.LongText
   status          Int               @default(1)
   createdAt       DateTime          @default(now())
@@ -71,6 +72,8 @@ model Wallet {
   id             Int           @id @default(autoincrement())
   name           String
   amount         Int
+  note           String?
+  is_default     Boolean?      @default(false)
   createdAt      DateTime      @default(now())
   updatedAt      DateTime?     @updatedAt
   deletedAt      DateTime?

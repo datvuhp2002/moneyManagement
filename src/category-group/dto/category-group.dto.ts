@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { CategoriesGroup } from '@prisma/client';
 import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
 
 export class CreateCategoryGroupDto {
@@ -29,4 +30,33 @@ export interface CategoryGroupPaginationResponseType {
   nextPage?: number;
   previousPage?: number;
   itemsPerPage?: number;
+  
 }
+
+// export interface CategoryGroupCalculatorFilterType {
+//   items_per_page?: number;
+//   page?: number;
+//   date?: Date;
+//   nextPage?: number;
+//   previousPage?: number;
+// }
+// export interface CategoryGroupCalculatorByRangeFilterType {
+//   items_per_page?: number;
+//   page?: number;
+//   nextPage?: number;
+//   previousPage?: number;
+//   start_date?: Date;
+//   end_date?: Date;
+// }
+// export interface CategoryGroupCalculatorPaginationResponseType {
+//   data: CategoriesGroup[];
+//   name: string,
+//   note:string,
+//   total: number;
+//   currentPage: number;
+//   nextPage?: number;
+//   previousPage?: number;
+//   itemsPerPage?: number;
+// }
+
+

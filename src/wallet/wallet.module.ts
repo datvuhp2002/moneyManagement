@@ -7,5 +7,6 @@ import { StatisticsService } from 'src/statistics/statistics.service';
 @Module({
   controllers: [WalletController],
   providers: [WalletService, PrismaService],
+  exports: [WalletService],
 })
 export class WalletModule {}
