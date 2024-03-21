@@ -11,6 +11,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { WalletService } from 'src/wallet/wallet.service';
 import { CategoryGroupService } from 'src/category-group/category-group.service';
 import { CategoryService } from 'src/category/category.service';
+import { CurrencyService } from 'src/currency/currency.service';
 @Module({
   imports: [
     PassportModule,
@@ -28,6 +29,6 @@ import { CategoryService } from 'src/category/category.service';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, PrismaService, LocalStrategy, JwtStrategy,WalletService, CategoryGroupService,CategoryService],
+  providers: [AuthService, PrismaService, LocalStrategy, JwtStrategy,WalletService, CategoryGroupService,CategoryService, CurrencyService],
 })
 export class AuthModule {}
