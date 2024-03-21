@@ -187,6 +187,25 @@ export class CurrencyService {
     };
   }
 
+  async createDefaultCurrency(userId: number) {
+    const DefaultCurrency = [
+      { name: "VND"},
+      { name: "USD"},
+      { name: "EURO"},
+      { name: "BAHT"},
+      { name: "GBP"},
+      { name: "CHF"},
+      { name: "Yên"},
+      { name: "RUB"},
+      { name: "HRK "},
+  ];
+  await this.prismaService.currency.createMany({
+      data: DefaultCurrency.map(Currency => ({
+          name: Currency.name
+      }))
+  });
+  }
+
   async getDetail(id: number): Promise<Currency> {
     return await this.prismaService.currency.findUnique({
       where: {
