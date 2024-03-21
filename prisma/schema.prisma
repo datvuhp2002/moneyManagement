@@ -73,7 +73,6 @@ model Wallet {
   name           String
   amount         Int
   note           String?
-  is_default     Boolean?      @default(false)
   createdAt      DateTime      @default(now())
   updatedAt      DateTime?     @updatedAt
   deletedAt      DateTime?
@@ -86,15 +85,14 @@ model Wallet {
 
 // duong
 model Currency {
-  id            Int           @id @default(autoincrement())
-  name          String
-  exchange_rate Float?
-  symbol        String?
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime?     @updatedAt
-  deletedAt     DateTime?
-  deleteMark    Boolean       @default(false)
-  Transaction   Transaction[]
+  id          Int           @id @default(autoincrement())
+  name        String
+  symbol      String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime?     @updatedAt
+  deletedAt   DateTime?
+  deleteMark  Boolean       @default(false)
+  Transaction Transaction[]
 }
 
 model Transaction {

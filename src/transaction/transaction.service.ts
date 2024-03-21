@@ -360,7 +360,6 @@ export class TransactionService {
           select: {
             id: true,
             name: true,
-            exchange_rate: true,
             symbol: true,
             createdAt: true,
             updatedAt: true,
