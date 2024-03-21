@@ -19,10 +19,64 @@ export class CategoryService {
       data: {
         ...createCategoryDto,
         categoriesGroup_id: Number(createCategoryDto.categoriesGroup_id),
-        user_id: userId,
+        // user_id: userId,
+        user_id: Number(createCategoryDto.user_id),
       },
     });
   }
+
+  async createDefaultCategory(userId: number, categoryGroupThuId: number, categoryGroupChiId:number) {
+    const expenseCategories = [
+      { name: "Mua sắm", symbol: "faCartShopping" },
+      { name: "Giáo dục", symbol: "faUserGraduate" },
+      { name: "Vận tải", symbol: "faTruckFast" },
+      { name: "Xe hơi", symbol: "faCar" },
+      { name: "Sức khỏe", symbol: "faHouseMedical" },
+      { name: "Du lịch", symbol: "faPlaneUp" },
+      { name: "Thuốc lá", symbol: "faSmoking" },
+      { name: "Thú nuôi", symbol: "faDog" },
+      { name: "Sửa chữa", symbol: "faScrewdriverWrench" },
+      { name: "Quần áo", symbol: "faShirt" },
+      { name: "Thiết bị điện tử", symbol: "faPlug" },
+      { name: "Rượu", symbol: "faWineGlass" },
+      { name: "Bơi", symbol: "faPersonSwimming" },
+      { name: "Thể thai", symbol: "faPersonBiking" },
+      { name: "Quyên góp", symbol: "faHandHoldingDollar" },
+      { name: "Đồ ăn nhẹ", symbol: "faBurger" },
+      { name: "Đi chợ", symbol: "faStore" },
+      { name: "Trẻ em", symbol: "faChildren" },
+      { name: "Xã hội", symbol: "faPeopleGroup" }
+  ];
+
+  const revenueCategories = [
+      { name: "Quà tặng", symbol: "faGift" },
+      { name: "Xổ số", symbol: "faTicket" },
+      { name: "Lương", symbol: "faMoneyBill1Wave" },
+      { name: "Đầu tư", symbol: "faSackDollar" },
+      { name: "Bán thời gian", symbol: "faBusinessTime" },
+      { name: "Giải thưởng", symbol: "faGifts" }
+  ];
+
+  await this.prismaService.category.createMany({
+      data: expenseCategories.map(category => ({
+          name: category.name,
+          symbol: category.symbol,
+          categoriesGroup_id: categoryGroupChiId,
+          user_id:userId
+      }))
+  });
+
+  // Tạo danh mục cho thu
+  await this.prismaService.category.createMany({
+      data: revenueCategories.map(category => ({
+          name: category.name,
+          symbol: category.symbol,
+          categoriesGroup_id: categoryGroupThuId,
+          user_id:userId
+      }))
+  });
+  }
+
   async trash(
     filters: CategoryFilterType,
   ): Promise<CategoryPaginationResponseType> {

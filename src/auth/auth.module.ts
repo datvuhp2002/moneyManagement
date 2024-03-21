@@ -9,6 +9,8 @@ import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { WalletService } from 'src/wallet/wallet.service';
+import { CategoryGroupService } from 'src/category-group/category-group.service';
+import { CategoryService } from 'src/category/category.service';
 @Module({
   imports: [
     PassportModule,
@@ -26,6 +28,6 @@ import { WalletService } from 'src/wallet/wallet.service';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, PrismaService, LocalStrategy, JwtStrategy,WalletService],
+  providers: [AuthService, PrismaService, LocalStrategy, JwtStrategy,WalletService, CategoryGroupService,CategoryService],
 })
 export class AuthModule {}

@@ -54,7 +54,7 @@ export class WalletService {
         createdAt: 'desc',
       },
     });
-    const total = await this.prismaService.categoriesGroup.count({
+    const total = await this.prismaService.wallet.count({
       where: {
         OR: [
           {

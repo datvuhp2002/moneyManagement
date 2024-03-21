@@ -17,6 +17,8 @@ import {
   payloadDto,
 } from './dto/auth.dto';
 import { WalletService } from 'src/wallet/wallet.service';
+import { CategoryGroupService } from 'src/category-group/category-group.service';
+import { CategoryService } from 'src/category/category.service';
 @Injectable()
 export class AuthService {
   constructor(
@@ -24,6 +26,8 @@ export class AuthService {
     private jwtService: JwtService,
     private configService: ConfigService,
     private walletService: WalletService,
+    private categoryGroupService: CategoryGroupService,
+    private categoryService: CategoryService
   ) {}
   async validateUser({ email, password }: AuthPayLoadDto): Promise<User> {
     const user = await this.prismaService.user.findUnique({
@@ -81,6 +85,9 @@ export class AuthService {
       data: { ...userData, password: hashPassword },
       })
       this.walletService.createDefaultWallet(createdUser.id)
+      const categoryGroupChi = await this.categoryGroupService.createDefaultCategoryGroupExpense(createdUser.id)
+      const categoryGroupThu = await this.categoryGroupService.createDefaultCategoryGroupRevenue(createdUser.id)
+      await this.categoryService.createDefaultCategory(createdUser.id,categoryGroupChi.id,categoryGroupThu.id)
       return createdUser
     }catch (error) {
       throw new HttpException('Không thể tạo ra người dùng', HttpStatus.INTERNAL_SERVER_ERROR);

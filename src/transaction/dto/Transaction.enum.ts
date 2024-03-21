@@ -1,5 +1,10 @@
 export enum TransactionType {
-  Chi = 'Expense',
-  Thu = 'Revenue',
-  ChuyenKhoan = 'Transfer',
+  Thu = 'Expense',
+  Chi = 'Revenue',
 }
+// const array = []; 
+// const object = {
+//   Thu: TransactionType.Thu,
+//   Chi: TransactionType.Chi,
+// };
+// array.push(object);

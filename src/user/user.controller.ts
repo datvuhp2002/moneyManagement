@@ -31,6 +31,7 @@ import { extname } from 'path';
 import { Roles } from 'src/auth/decorator/roles.decorator';
 import { Role } from 'src/auth/dto/Role.enum';
 import { Request } from 'express';
+import { WalletService } from 'src/wallet/wallet.service';
 @ApiBearerAuth()
 @ApiTags('Users')
 @Controller('users')
@@ -41,6 +42,7 @@ export class UserController {
   create(@Body() body: CreateUserDto): Promise<User> {
     return this.userService.create(body);
   }
+
   @Get('trash')
   @ApiQuery({ name: 'page', required: false })
   @ApiQuery({ name: 'items_per_page', required: false })

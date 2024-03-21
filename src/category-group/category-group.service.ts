@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.servcie';
 import {
+  // CategoryGroupCalculatorByRangeFilterType,
+  // CategoryGroupCalculatorPaginationResponseType,
   CategoryGroupFilterType,
   CategoryGroupPaginationResponseType,
   CreateCategoryGroupDto,
@@ -23,6 +25,23 @@ export class CategoryGroupService {
       where: { id },
     });
   }
+
+  async createDefaultCategoryGroupExpense(userId: number): Promise<CategoriesGroup> {
+    const DefaultCategoryGroupExpense= {
+      name: 'Thu',
+      note: 'Tổng tiền thu',
+    };
+    return await this.create(userId, DefaultCategoryGroupExpense);
+  }
+
+  async createDefaultCategoryGroupRevenue(userId: number): Promise<CategoriesGroup> {
+    const DefaultCategoryGroupRevenue= {
+      name: 'Chi',
+      note: 'Tổng tiền chi',
+    };
+    return await this.create(userId, DefaultCategoryGroupRevenue);
+  }
+
   async getAll(
     filters: CategoryGroupFilterType,
   ): Promise<CategoryGroupPaginationResponseType> {
@@ -210,6 +229,7 @@ export class CategoryGroupService {
       itemsPerPage: items_per_page,
     };
   }
+  asyn
 
   async update(
     id: number,
