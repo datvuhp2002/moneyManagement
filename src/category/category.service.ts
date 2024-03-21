@@ -40,7 +40,7 @@ export class CategoryService {
       { name: "Thiết bị điện tử", symbol: "faPlug" },
       { name: "Rượu", symbol: "faWineGlass" },
       { name: "Bơi", symbol: "faPersonSwimming" },
-      { name: "Thể thai", symbol: "faPersonBiking" },
+      { name: "Thể thao", symbol: "faPersonBiking" },
       { name: "Quyên góp", symbol: "faHandHoldingDollar" },
       { name: "Đồ ăn nhẹ", symbol: "faBurger" },
       { name: "Đi chợ", symbol: "faStore" },
