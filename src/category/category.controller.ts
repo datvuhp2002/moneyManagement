@@ -9,6 +9,7 @@ import {
   Req,
   ParseIntPipe,
   Put,
+  Query,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -38,26 +39,16 @@ export class CategoryController {
   }
   @Roles([Role.Admin])
   @Get('/trash')
-  @ApiQuery({ name: 'page', required: false })
-  @ApiQuery({ name: 'items_per_page', required: false })
-  @ApiQuery({ name: 'search', required: false })
-  @ApiQuery({ name: 'previousPage', required: false })
-  @ApiQuery({ name: 'nextPage', required: false })
   async trash(
-    @Param() filter: CategoryFilterType,
   ): Promise<CategoryPaginationResponseType> {
-    return await this.categoryService.trash(filter);
+    return await this.categoryService.trash();
   }
   @Roles([Role.User, Role.Admin])
   @Get('/getAll')
-  @ApiQuery({ name: 'page', required: false })
-  @ApiQuery({ name: 'items_per_page', required: false })
-  @ApiQuery({ name: 'search', required: false })
-  @ApiQuery({ name: 'previousPage', required: false })
-  @ApiQuery({ name: 'nextPage', required: false })
+  @ApiQuery({ name: 'categoriesGroup_id', required: false })
   async getAllForUser(
     @Req() req: Request,
-    @Param() filter: CategoryFilterType,
+    @Query() filter: CategoryFilterType,
   ): Promise<CategoryPaginationResponseType> {
     console.log('User', req.user);
     const userId = Number(req.user['id']);

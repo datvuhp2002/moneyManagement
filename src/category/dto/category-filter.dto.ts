@@ -1,15 +1,8 @@
+import { Category } from "@prisma/client";
 export interface CategoryFilterType {
-  items_per_page?: number | null;
-  page?: number | null;
-  search?: string | null;
-  nextPage?: number | null;
-  previousPage?: number | null;
+  categoriesGroup_id:number;
 }
 export interface CategoryPaginationResponseType {
-  data: { name: string; createdAt: Date }[];
+  data: Category[];
   total: number;
-  currentPage: number;
-  nextPage?: number;
-  previousPage?: number;
-  itemsPerPage?: number;
 }

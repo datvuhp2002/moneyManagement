@@ -24,7 +24,6 @@ export class CategoryService {
       },
     });
   }
-
   async createDefaultCategory(userId: number, categoryGroupThuId: number, categoryGroupChiId:number) {
     const expenseCategories = [
       { name: "Mua sắm", symbol: "faCartShopping" },
@@ -76,25 +75,10 @@ export class CategoryService {
       }))
   });
   }
-
   async trash(
-    filters: CategoryFilterType,
   ): Promise<CategoryPaginationResponseType> {
-    const items_per_page = Number(filters.items_per_page) || 10;
-    const page = Number(filters.page) || 1;
-    const search = filters.search || '';
-    const skip = page > 1 ? (page - 1) * items_per_page : 0;
     const categories = await this.prismaService.category.findMany({
-      take: items_per_page,
-      skip,
       where: {
-        OR: [
-          {
-            name: {
-              contains: search,
-            },
-          },
-        ],
         AND: [
           {
             deleteMark: true,
@@ -107,13 +91,6 @@ export class CategoryService {
     });
     const total = await this.prismaService.category.count({
       where: {
-        OR: [
-          {
-            name: {
-              contains: search,
-            },
-          },
-        ],
         AND: [
           {
             deleteMark: true,
@@ -121,36 +98,16 @@ export class CategoryService {
         ],
       },
     });
-    const lastPage = Math.ceil(total / items_per_page);
-    const nextPage = page + 1 > lastPage ? null : page + 1;
-    const previousPage = page - 1 < 1 ? null : page - 1;
     return {
       data: categories,
       total,
-      nextPage,
-      previousPage,
-      currentPage: page,
-      itemsPerPage: items_per_page,
     };
   }
   async getAll(
     filters: CategoryFilterType,
   ): Promise<CategoryPaginationResponseType> {
-    const items_per_page = Number(filters.items_per_page) || 10;
-    const page = Number(filters.page) || 1;
-    const search = filters.search || '';
-    const skip = page > 1 ? (page - 1) * items_per_page : 0;
     const categories = await this.prismaService.category.findMany({
-      take: items_per_page,
-      skip,
       where: {
-        OR: [
-          {
-            name: {
-              contains: search,
-            },
-          },
-        ],
         AND: [
           {
             deleteMark: false,
@@ -163,13 +120,6 @@ export class CategoryService {
     });
     const total = await this.prismaService.category.count({
       where: {
-        OR: [
-          {
-            name: {
-              contains: search,
-            },
-          },
-        ],
         AND: [
           {
             deleteMark: false,
@@ -177,38 +127,23 @@ export class CategoryService {
         ],
       },
     });
-    const lastPage = Math.ceil(total / items_per_page);
-    const nextPage = page + 1 > lastPage ? null : page + 1;
-    const previousPage = page - 1 < 1 ? null : page - 1;
     return {
       data: categories,
       total,
-      nextPage,
-      previousPage,
-      currentPage: page,
-      itemsPerPage: items_per_page,
     };
   }
 
   async getAllForUser(
     userId: number,
-    filters: CategoryFilterType,
+    filters: CategoryFilterType
   ): Promise<CategoryPaginationResponseType> {
-    const items_per_page = Number(filters.items_per_page) || 10;
-    const page = Number(filters.page) || 1;
-    const search = filters.search || '';
-    const skip = page > 1 ? (page - 1) * items_per_page : 0;
     const categories = await this.prismaService.category.findMany({
-      take: items_per_page,
-      skip,
       where: {
         user_id: userId,
-        OR: [
+        OR:[
           {
-            name: {
-              contains: search,
-            },
-          },
+            categoriesGroup_id: Number(filters.categoriesGroup_id),
+          }
         ],
         AND: [
           {
@@ -223,12 +158,10 @@ export class CategoryService {
     const total = await this.prismaService.category.count({
       where: {
         user_id: userId,
-        OR: [
+        OR:[
           {
-            name: {
-              contains: search,
-            },
-          },
+            categoriesGroup_id: Number(filters.categoriesGroup_id),
+          }
         ],
         AND: [
           {
@@ -237,16 +170,9 @@ export class CategoryService {
         ],
       },
     });
-    const lastPage = Math.ceil(total / items_per_page);
-    const nextPage = page + 1 > lastPage ? null : page + 1;
-    const previousPage = page - 1 < 1 ? null : page - 1;
     return {
       data: categories,
       total,
-      nextPage,
-      previousPage,
-      currentPage: page,
-      itemsPerPage: items_per_page,
     };
   }
   async findDetail(id: number) {
