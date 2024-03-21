@@ -40,7 +40,7 @@ export class CategoryService {
       { name: "Thiết bị điện tử", symbol: "faPlug" },
       { name: "Rượu", symbol: "faWineGlass" },
       { name: "Bơi", symbol: "faPersonSwimming" },
-      { name: "Thể thai", symbol: "faPersonBiking" },
+      { name: "Thể thao", symbol: "faPersonBiking" },
       { name: "Quyên góp", symbol: "faHandHoldingDollar" },
       { name: "Đồ ăn nhẹ", symbol: "faBurger" },
       { name: "Đi chợ", symbol: "faStore" },
@@ -49,9 +49,9 @@ export class CategoryService {
   ];
 
   const revenueCategories = [
+      { name: "Lương", symbol: "faMoneyBill1Wave" },
       { name: "Quà tặng", symbol: "faGift" },
       { name: "Xổ số", symbol: "faTicket" },
-      { name: "Lương", symbol: "faMoneyBill1Wave" },
       { name: "Đầu tư", symbol: "faSackDollar" },
       { name: "Bán thời gian", symbol: "faBusinessTime" },
       { name: "Giải thưởng", symbol: "faGifts" }
