@@ -29,26 +29,18 @@ import { getUser } from 'src/user/decorator/user.decorator';
 export class StatisticsController {
   constructor(private readonly statisticsService: StatisticsService) {}
   @Get('calculatorByMonth')
-  @ApiQuery({ name: 'page', required: false })
-  @ApiQuery({ name: 'items_per_page', required: false })
-  @ApiQuery({ name: 'previousPage', required: false })
-  @ApiQuery({ name: 'nextPage', required: false })
   @ApiQuery({ name: 'date', required: false })
   @ApiQuery({ name: 'transaction_type', required: false })
   @Roles([Role.Admin, Role.User])
-  async calculatorByMonth(@getUser() user,@Query() filters: StatisticsCalculatorFilterType):Promise<StatisticsCalculatorByRangeFilterType> {
+  async calculatorByMonth(@getUser() user,@Query() filters: StatisticsCalculatorFilterType):Promise<StatisticsCalculatorPaginationResponseType> {
     const userId = Number(user.id);
     return this.statisticsService.calculatorByMonth(userId, filters);
   }
   @Get('calculatorByYear')
-  @ApiQuery({ name: 'page', required: false })
-  @ApiQuery({ name: 'items_per_page', required: false })
-  @ApiQuery({ name: 'previousPage', required: false })
-  @ApiQuery({ name: 'nextPage', required: false })
   @ApiQuery({ name: 'date', required: false })
   @ApiQuery({ name: 'transaction_type', required: false })
   @Roles([Role.Admin, Role.User])
-  async calculatorByYear(@getUser() user,@Query() filters: StatisticsCalculatorFilterType):Promise<StatisticsCalculatorByRangeFilterType> {
+  async calculatorByYear(@getUser() user,@Query() filters: StatisticsCalculatorFilterType):Promise<StatisticsCalculatorPaginationResponseType> {
     const userId = Number(user.id);
     return this.statisticsService.calculatorByYear(userId, filters);
   }

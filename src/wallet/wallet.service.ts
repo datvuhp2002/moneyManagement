@@ -15,7 +15,7 @@ export class WalletService {
   constructor(private prismaService: PrismaService) {}
   async create(id: number, data: CreateWalletDto): Promise<Wallet> {
     return await this.prismaService.wallet.create({
-      data: { ...data, user_id: id },
+      data: { ...data, user_id: id, amount:Number(data.amount) },
     });
   }
   async createDefaultWallet(userId: number): Promise<void> {

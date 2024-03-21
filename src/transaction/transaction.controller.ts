@@ -19,7 +19,6 @@ import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { Request } from 'express';
 import {
-  TransactionFilterType,
   TransactionPaginationResponseType,
 } from './dto/filter-type.dto';
 import { Roles } from 'src/auth/decorator/roles.decorator';
@@ -116,41 +115,23 @@ export class TransactionController {
   }
   @Roles([Role.Admin])
   @Get()
-  @ApiQuery({ name: 'page', required: false })
-  @ApiQuery({ name: 'items_per_page', required: false })
-  @ApiQuery({ name: 'search', required: false })
-  @ApiQuery({ name: 'previousPage', required: false })
-  @ApiQuery({ name: 'nextPage', required: false })
   async getAll(
-    @Param() filter: TransactionFilterType,
   ): Promise<TransactionPaginationResponseType> {
-    return await this.transactionService.getAll(filter);
+    return await this.transactionService.getAll();
   }
   @Roles([Role.Admin])
   @Get('trash')
-  @ApiQuery({ name: 'page', required: false })
-  @ApiQuery({ name: 'items_per_page', required: false })
-  @ApiQuery({ name: 'search', required: false })
-  @ApiQuery({ name: 'previousPage', required: false })
-  @ApiQuery({ name: 'nextPage', required: false })
   async trash(
-    @Param() filter: TransactionFilterType,
   ): Promise<TransactionPaginationResponseType> {
-    return await this.transactionService.trash(filter);
+    return await this.transactionService.trash();
   }
   @Roles([Role.User, Role.Admin])
-  @ApiQuery({ name: 'page', required: false })
-  @ApiQuery({ name: 'items_per_page', required: false })
-  @ApiQuery({ name: 'search', required: false })
-  @ApiQuery({ name: 'previousPage', required: false })
-  @ApiQuery({ name: 'nextPage', required: false })
   @Get('getAll')
   async getAllForUser(
     @getUser() user,
-    @Param() filter: TransactionFilterType,
   ): Promise<TransactionPaginationResponseType> {
     const userId = Number(user.id);
-    return await this.transactionService.getAllForUser(userId, filter);
+    return await this.transactionService.getAllForUser(userId);
   }
   @Get(':id')
   @Roles([ Role.Admin])

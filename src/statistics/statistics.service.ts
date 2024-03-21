@@ -7,7 +7,6 @@ import {
   StatisticsCalculatorByRangeFilterType,
   StatisticsCalculatorFilterType,
   StatisticsCalculatorPaginationResponseType,
-  StatisticsDateFilterType,
   StatisticsFilterType,
   StatisticsPaginationResponseType,
 } from './dto/filter-type.dto';
@@ -72,14 +71,11 @@ export class StatisticsService {
   async getAll(
     filters: StatisticsFilterType,
   ): Promise<StatisticsPaginationResponseType> {
-    const items_per_page = Number(filters.items_per_page) || 10;
-    const page = Number(filters.page) || 1;
     const startDate = filters.start_date
       ? new Date(filters.start_date)
       : new Date(0); 
     const endDate = filters.end_date ? new Date(filters.end_date) : new Date(); 
     endDate.setHours(23, 59, 59, 999);
-    const skip = page > 1 ? (page - 1) * items_per_page : 0;
     const where = {
       deleteMark: false,
       recordDate: {
@@ -88,38 +84,26 @@ export class StatisticsService {
       },
     };
     const statistics = await this.prismaService.statistics.findMany({
-      take: items_per_page,
-      skip,
       where,
       orderBy: {
          recordDate: 'asc',
       },
     });
     const total = await this.prismaService.statistics.count({ where });
-    const lastPage = Math.ceil(total / items_per_page);
-    const nextPage = page + 1 > lastPage ? null : page + 1;
-    const previousPage = page - 1 < 1 ? null : page - 1;
     return {
       data: statistics,
       total,
-      nextPage,
-      previousPage,
-      currentPage: page,
-      itemsPerPage: items_per_page,
     };
   }
   async getAllForUser(
     userId: number,
     filters: StatisticsFilterType,
   ): Promise<StatisticsPaginationResponseType> {
-    const itemsPerPage = Number(filters.items_per_page) || 10;
-    const page = Number(filters.page) || 1;
     const startDate = filters.start_date
       ? new Date(filters.start_date)
       : new Date(0);
     const endDate = filters.end_date ? new Date(filters.end_date) : new Date(); 
     endDate.setHours(23, 59, 59, 999);
-    const skip = (page - 1) * itemsPerPage;
     const where = {
         user_id:userId,
       deleteMark: false,
@@ -134,21 +118,12 @@ export class StatisticsService {
         orderBy: {
             recordDate: 'asc',
         },
-        take: itemsPerPage,
-        skip,
       }),
       this.prismaService.statistics.count({ where }),
     ]);
-    const lastPage = Math.ceil(total / itemsPerPage);
-    const nextPage = page >= lastPage ? null : page + 1;
-    const previousPage = page <= 1 ? null : page - 1;
     return {
       data: statistics,
-      total,
-      nextPage,
-      previousPage,
-      currentPage: page,
-      itemsPerPage,
+      total
     };
   }
   async calculatorByMonth(userId: number, filters:StatisticsCalculatorFilterType):Promise<StatisticsCalculatorPaginationResponseType> {
@@ -171,9 +146,6 @@ export class StatisticsService {
     return statistics
   }
   async calculatorByDateRange(userId: number, filters: StatisticsCalculatorByRangeFilterType,startDate: Date, endDate: Date):Promise<StatisticsCalculatorPaginationResponseType>{
-    const items_per_page = Number(filters.items_per_page) || 10;
-    const page = Number(filters.page) || 1;
-    const skip = page > 1 ? (page - 1) * items_per_page : 0;
     const where = {
       user_id: userId,
       deleteMark: false,
@@ -183,8 +155,6 @@ export class StatisticsService {
       },
     };
     const statistics = await this.prismaService.statistics.findMany({
-      take: items_per_page,
-      skip,
       where,
       orderBy: {
          recordDate: 'asc',
@@ -197,21 +167,12 @@ export class StatisticsService {
       },
       where,
     });
-    const transactions = await this.transactionService.getAllByRange(userId,startDate,endDate,filters.transaction_type,filters.search)
-    const total = await this.prismaService.statistics.count({ where });
-    const lastPage = Math.ceil(total / items_per_page);
-    const nextPage = page + 1 > lastPage ? null : page + 1;
-    const previousPage = page - 1 < 1 ? null : page - 1;
+    const transactions = await this.transactionService.getAllByRange(userId,startDate,endDate,filters.transaction_type)
     return {
       data: statistics,
       transaction: transactions,
       expense: calculator._sum?.expense ?? 0,
       revenue: calculator._sum?.revenue ?? 0,
-      total,
-      nextPage,
-      previousPage,
-      currentPage: page,
-      itemsPerPage: items_per_page,
     };
   }
   async remove(id: number) {
