@@ -4,7 +4,6 @@ import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { PrismaService } from 'src/prisma.servcie';
 import {
   TransactionByRangeResponseType,
-  TransactionFilterType,
   TransactionPaginationResponseType,
   TransactionRangeFilterType,
 } from './dto/filter-type.dto';
@@ -184,23 +183,10 @@ export class TransactionService {
   // }
 
   async getAll(
-    filters: TransactionFilterType,
   ): Promise<TransactionPaginationResponseType> {
-    const items_per_page = Number(filters.items_per_page) || 10;
-    const page = Number(filters.page) || 1;
-    const search = filters.search || '';
-    const skip = page > 1 ? (page - 1) * items_per_page : 0;
     const Transactions = await this.prismaService.transaction.findMany({
-      take: items_per_page,
-      skip,
       where: {
-        OR: [
-          {
-            note: {
-              contains: search,
-            },
-          },
-        ],
+       
         AND: [
           {
             deleteMark: false,
@@ -213,13 +199,7 @@ export class TransactionService {
     });
     const total = await this.prismaService.transaction.count({
       where: {
-        OR: [
-          {
-            note: {
-              contains: search,
-            },
-          },
-        ],
+       
         AND: [
           {
             deleteMark: false,
@@ -227,38 +207,17 @@ export class TransactionService {
         ],
       },
     });
-    const lastPage = Math.ceil(total / items_per_page);
-    const nextPage = page + 1 > lastPage ? null : page + 1;
-    const previousPage = page - 1 < 1 ? null : page - 1;
     return {
       data: Transactions,
       total,
-      nextPage,
-      previousPage,
-      currentPage: page,
-      itemsPerPage: items_per_page,
     };
   }
   async getAllForUser(
     userId: number,
-    filters: TransactionFilterType,
   ): Promise<TransactionPaginationResponseType> {
-    const items_per_page = Number(filters.items_per_page) || 10;
-    const page = Number(filters.page) || 1;
-    const search = filters.search || '';
-    const skip = page > 1 ? (page - 1) * items_per_page : 0;
     const Transactions = await this.prismaService.transaction.findMany({
-      take: items_per_page,
-      skip,
       where: {
         user_id: userId,
-        OR: [
-          {
-            note: {
-              contains: search,
-            },
-          },
-        ],
         AND: [
           {
             deleteMark: false,
@@ -272,13 +231,7 @@ export class TransactionService {
     const total = await this.prismaService.transaction.count({
       where: {
         user_id: userId,
-        OR: [
-          {
-            note: {
-              contains: search,
-            },
-          },
-        ],
+        
         AND: [
           {
             deleteMark: false,
@@ -286,16 +239,9 @@ export class TransactionService {
         ],
       },
     });
-    const lastPage = Math.ceil(total / items_per_page);
-    const nextPage = page + 1 > lastPage ? null : page + 1;
-    const previousPage = page - 1 < 1 ? null : page - 1;
     return {
       data: Transactions,
       total,
-      nextPage,
-      previousPage,
-      currentPage: page,
-      itemsPerPage: items_per_page,
     };
   }
 
@@ -318,10 +264,8 @@ export class TransactionService {
     userId: number,
     startDate:Date,
     endDate:Date,
-    search:string,
     transaction_type:string
   ): Promise<TransactionByRangeResponseType> {
-    const searchKeyWord = search || '';
     endDate.setHours(23, 59, 59, 999);
     const where:any = {
       user_id: userId,
@@ -330,13 +274,6 @@ export class TransactionService {
         lte: endDate,
       },
       deleteMark: false,
-      OR: [
-        {
-          note: {
-            contains: searchKeyWord,
-          },
-        },
-      ],
     }
     if(transaction_type){
       const transactionsType = TransactionType[`${transaction_type}`] 
@@ -436,23 +373,10 @@ export class TransactionService {
   }
   
   async trash(
-    filters: TransactionFilterType,
   ): Promise<TransactionPaginationResponseType> {
-    const items_per_page = Number(filters.items_per_page) || 10;
-    const page = Number(filters.page) || 1;
-    const search = filters.search || '';
-    const skip = page > 1 ? (page - 1) * items_per_page : 0;
     const Transactions = await this.prismaService.transaction.findMany({
-      take: items_per_page,
-      skip,
       where: {
-        OR: [
-          {
-            note: {
-              contains: search,
-            },
-          },
-        ],
+        
         AND: [
           {
             deleteMark: true,
@@ -465,13 +389,6 @@ export class TransactionService {
     });
     const total = await this.prismaService.transaction.count({
       where: {
-        OR: [
-          {
-            note: {
-              contains: search,
-            },
-          },
-        ],
         AND: [
           {
             deleteMark: true,
@@ -479,16 +396,9 @@ export class TransactionService {
         ],
       },
     });
-    const lastPage = Math.ceil(total / items_per_page);
-    const nextPage = page + 1 > lastPage ? null : page + 1;
-    const previousPage = page - 1 < 1 ? null : page - 1;
     return {
       data: Transactions,
       total,
-      nextPage,
-      previousPage,
-      currentPage: page,
-      itemsPerPage: items_per_page,
     };
   }
   async delete(userId: number, id: number): Promise<void> {
