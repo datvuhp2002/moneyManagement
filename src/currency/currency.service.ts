@@ -70,7 +70,7 @@ export class CurrencyService {
   }
   async create(data: CreateCurrencyDto): Promise<Currency> {
     return await this.prismaService.currency.create({
-      data: { ...data, exchange_rate: Number(data.exchange_rate) },
+      data: { ...data},
     });
   }
 
@@ -217,7 +217,7 @@ export class CurrencyService {
   async update(id: number, data: UpdateCurrencyDto): Promise<Currency> {
     return await this.prismaService.currency.update({
       where: { id },
-      data: { ...data, exchange_rate: Number(data.exchange_rate) },
+      data: { ...data },
     });
   }
   async delete(id: number): Promise<Currency> {

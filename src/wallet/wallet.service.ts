@@ -200,9 +200,9 @@ export class WalletService {
       },
     });
   }
-  async update(id: number, data: UpdateWalletDto): Promise<Wallet> {
+  async update(userId:number,id: number, data: UpdateWalletDto): Promise<Wallet> {
     return await this.prismaService.wallet.update({
-      where: { id },
+      where: { user_id: userId,id },
       data:{
         amount:Number(data.amount)
       },

@@ -80,14 +80,15 @@ export class WalletController {
   async getDetail(@Param('id', ParseIntPipe) id: number): Promise<Wallet> {
     return await this.walletService.getDetail(id);
   }
-
-  @Roles([Role.Admin])
+  @Roles([Role.Admin,Role.User])
   @Put(':id')
   async update(
+    @getUser() user,
     @Param('id', ParseIntPipe) id: number,
     @Body() data: UpdateWalletDto,
   ): Promise<Wallet> {
-    return await this.walletService.update(id, data);
+    const userId = Number(user.id)
+    return await this.walletService.update(userId,id, data);
   }
   @Roles([Role.Admin])
   @Delete('force-delete/:id')
