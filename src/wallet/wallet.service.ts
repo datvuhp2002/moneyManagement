@@ -204,6 +204,7 @@ export class WalletService {
     return await this.prismaService.wallet.update({
       where: { user_id: userId,id },
       data:{
+        ...data,
         amount:Number(data.amount)
       },
     });
