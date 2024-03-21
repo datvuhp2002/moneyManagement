@@ -49,14 +49,6 @@ export class CurrencyService {
   async getAll(
   ): Promise<CurrencyPaginationResponseType> {
     const currency = await this.prismaService.currency.findMany({
-      select: {
-        name: true,
-        createdAt: true,
-        deletedAt: true,
-      },
-      where: {
-       
-      },
       orderBy: {
         createdAt: 'desc',
       },
@@ -69,38 +61,6 @@ export class CurrencyService {
     };
   }
 
-  async getAllForUser(
-    id: number,
-  ): Promise<CurrencyPaginationResponseType> {
-    const currency = await this.prismaService.currency.findMany({
-      where: {
-        id,
-        AND: [
-          {
-            deleteMark: false,
-          },
-        ],
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
-    console.log('currency = ', currency);
-    const total = await this.prismaService.categoriesGroup.count({
-      where: {
-        user_id: id,
-        AND: [
-          {
-            deleteMark: false,
-          },
-        ],
-      },
-    });
-    return {
-      data: currency,
-      total,
-    };
-  }
 
   async createDefaultCurrency(userId: number) {
     const DefaultCurrency = [

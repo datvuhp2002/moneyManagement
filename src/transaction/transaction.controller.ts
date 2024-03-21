@@ -35,6 +35,7 @@ import { UploadPaymentImageDto } from './dto/upload-paymentImage.dto';
 export class TransactionController {
   constructor(private readonly transactionService: TransactionService) {}
   @Post()
+  @Roles([Role.Admin, Role.User])
   @UseInterceptors(
     FileInterceptor('paymentImage', {
       storage: storageConfig('paymentImage'),
