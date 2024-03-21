@@ -35,36 +35,15 @@ export class CurrencyController {
   }
   @Roles([Role.Admin])
   @Get('/trash')
-  @ApiQuery({ name: 'page', required: false })
-  @ApiQuery({ name: 'items_per_page', required: false })
-  @ApiQuery({ name: 'search', required: false })
-  @ApiQuery({ name: 'previousPage', required: false })
-  @ApiQuery({ name: 'nextPage', required: false })
   async getAllTrash(
-    @Param() filter: CurrencyFilterType,
   ): Promise<CurrencyPaginationResponseType> {
-    return await this.currencyService.getAllTrash(filter);
+    return await this.currencyService.getAllTrash();
   }
   @Get()
-  @Roles([Role.Admin])
-  @ApiQuery({ name: 'page', required: false })
-  @ApiQuery({ name: 'items_per_page', required: false })
-  @ApiQuery({ name: 'search', required: false })
-  @ApiQuery({ name: 'previousPage', required: false })
-  @ApiQuery({ name: 'nextPage', required: false })
+  @Roles([Role.Admin, Role.User])
   async getAll(
-    @Param() filter: CurrencyFilterType,
   ): Promise<CurrencyPaginationResponseType> {
-    return await this.currencyService.getAll(filter);
-  }
-  @Roles([Role.User,Role.Admin])
-  @Get('/getAll')
-  async getAllForUser(
-    @Req() req: Request,
-    @Param() filter: CurrencyFilterType,
-  ): Promise<CurrencyPaginationResponseType> {
-    const userId = Number(req.user['id']);
-    return this.currencyService.getAllForUser(userId, filter);
+    return await this.currencyService.getAll();
   }
   @Roles([Role.Admin])
   @Public()

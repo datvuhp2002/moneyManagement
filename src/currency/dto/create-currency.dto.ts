@@ -22,8 +22,4 @@ export interface CurrencyFilterType {
 export interface CurrencyPaginationResponseType {
   data: { name: string; createdAt: Date }[];
   total: number;
-  currentPage: number;
-  nextPage?: number;
-  previousPage?: number;
-  itemsPerPage?: number;
 }
