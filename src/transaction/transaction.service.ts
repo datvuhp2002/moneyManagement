@@ -156,31 +156,6 @@ export class TransactionService {
       userId,
     );
   }
-  // private async createStatistics(
-  //   userId: number,
-  //   date: Date,
-  //   createTransactionDto: CreateTransactionDto,
-  // ): Promise<void> {
-  //   let expense = 0;
-  //   let revenue = 0;
-  //   createTransactionDto.transactionType.forEach(type => {
-  //       if (type === TransactionType.Chi) {
-  //           expense += Number(createTransactionDto.bill);
-  //       } else if (type === TransactionType.Thu) {
-  //           revenue += Number(createTransactionDto.bill);
-  //       }
-  //   });
-
-  //   await this.statisticsService.create(
-  //     {
-  //       expense: expense,
-  //       revenue: revenue,
-  //       recordDate: date,
-  //       wallet_id: Number(createTransactionDto.wallet_id),
-  //     },
-  //     userId,
-  //   );
-  // }
 
   async getAll(
   ): Promise<TransactionPaginationResponseType> {
