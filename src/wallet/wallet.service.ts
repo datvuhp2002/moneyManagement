@@ -203,7 +203,9 @@ export class WalletService {
   async update(id: number, data: UpdateWalletDto): Promise<Wallet> {
     return await this.prismaService.wallet.update({
       where: { id },
-      data,
+      data:{
+        amount:Number(data.amount)
+      },
     });
   }
   async updateAmount(id:number, amount:number):Promise<Wallet>{
